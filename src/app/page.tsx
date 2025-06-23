@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import KoreaMap from "@/components/KoreaMap";
 import SeoulMap from "@/components/SeoulMap";
 import GyeonggiMap from "@/components/GyeonggiMap";
@@ -299,7 +298,6 @@ const KakaoMapSearchComponent: React.FC = () => {
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
-  const mapRef = useRef<KakaoMap | null>(null);
 
   // supabase fetchPlaces 함수 제거, 더미 데이터 기반으로 변경
   const fetchPlaces = (
