@@ -39,11 +39,7 @@ const seoulDistricts = [
   "중랑구",
 ];
 
-const SeoulMap: React.FC<SeoulMapProps> = ({
-  onDistrictClick,
-  places,
-  allPlaces,
-}) => {
+const SeoulMap: React.FC<SeoulMapProps> = ({ onDistrictClick, allPlaces }) => {
   const [geoJson, setGeoJson] = useState<FeatureCollection<
     Geometry,
     GeoJsonProperties

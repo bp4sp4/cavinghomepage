@@ -17,7 +17,6 @@ const districts: { id: string; d: string }[] = paths.map(
 );
 
 const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
-  places,
   allPlaces,
   onDistrictClick,
 }) => {
