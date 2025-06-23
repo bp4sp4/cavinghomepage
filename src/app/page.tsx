@@ -12,7 +12,7 @@ import SeoulMap from "@/components/SeoulMap";
 import GyeonggiMap from "@/components/GyeonggiMap";
 
 export interface Place {
-  district: any;
+  district: string | undefined;
   id: number;
   name: string;
   address: string;
@@ -294,7 +294,6 @@ const REGIONS = [
 
 const KakaoMapSearchComponent: React.FC = () => {
   const [places, setPlaces] = useState<Place[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<Place | null>(null);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
@@ -354,11 +353,9 @@ const KakaoMapSearchComponent: React.FC = () => {
       fetchPlaces(search, "서울", null, null);
     } else if (selectedCity) {
       setSelectedCity(null);
-      setSelectedLocation(null);
       fetchPlaces(search, "경기", null, null);
     } else if (selectedRegion) {
       setSelectedRegion(null);
-      setSelectedLocation(null);
       fetchPlaces();
     } else {
       setSearch("");
@@ -367,8 +364,6 @@ const KakaoMapSearchComponent: React.FC = () => {
   };
 
   const handleSelect = (place: Place) => {
-    setSelectedLocation(place);
-
     if (!selectedRegion) {
       const region = REGIONS.find((r) => place.address.includes(r));
       if (region) {

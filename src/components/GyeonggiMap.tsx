@@ -9,11 +9,11 @@ interface GyeonggiMapProps {
   onDistrictClick: (districtName: string) => void;
 }
 
-// paths 배열을 districts로 변환 (id: 영문, name: 한글, d: path)
-const districts: { id: string; d: string }[] = paths.map((p: any) => ({
-  id: p.id,
-  d: p.d,
-}));
+// paths의 타입을 명확히 지정
+// (예: import paths from ... as { id: string; name: string; d: string }[])
+const districts: { id: string; d: string }[] = paths.map(
+  (p: { id: string; d: string }) => ({ id: p.id, d: p.d })
+);
 
 const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
   places,
