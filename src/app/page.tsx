@@ -397,11 +397,21 @@ const KakaoMapSearchComponent: React.FC = () => {
 
   const renderMap = () => {
     if (selectedRegion === "서울") {
-      return <SeoulMap onDistrictClick={handleDistrictClick} places={places} />;
+      return (
+        <SeoulMap
+          onDistrictClick={handleDistrictClick}
+          places={places}
+          allPlaces={DUMMY_PLACES}
+        />
+      );
     }
     if (selectedRegion === "경기") {
       return (
-        <GyeonggiMap onDistrictClick={handleDistrictClick} places={places} />
+        <GyeonggiMap
+          onDistrictClick={handleDistrictClick}
+          places={places}
+          allPlaces={DUMMY_PLACES}
+        />
       );
     }
     return <KoreaMap onRegionClick={handleRegionClick} places={places} />;
@@ -418,7 +428,9 @@ const KakaoMapSearchComponent: React.FC = () => {
           <div className="p-4">
             <Button onClick={handleReset} className="w-full">
               {selectedDistrict
-                ? "서울 전체 맵으로"
+                ? selectedRegion === "경기"
+                  ? "경기 전체 맵으로"
+                  : "서울 전체 맵으로"
                 : selectedCity
                 ? "경기 전체 맵으로"
                 : "전체 맵으로 돌아가기"}

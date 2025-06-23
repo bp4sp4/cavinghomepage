@@ -6,6 +6,7 @@ import paths from "../../scripts/gyeonggi-paths";
 
 interface GyeonggiMapProps {
   places: Place[];
+  allPlaces: Place[];
   onDistrictClick: (districtName: string) => void;
 }
 
@@ -17,13 +18,14 @@ const districts: { id: string; d: string }[] = paths.map(
 
 const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
   places,
+  allPlaces,
   onDistrictClick,
 }) => {
   // 시군구별 시설 개수 계산
   const placeCounts = useMemo(() => {
     const counts: { [key: string]: number } = {};
     districts.forEach((d) => (counts[d.id] = 0));
-    places.forEach((place) => {
+    allPlaces.forEach((place) => {
       // id(한글 시군구명)가 주소에 포함되어 있으면 카운트
       const district = districts.find((d) => place.address.includes(d.id));
       if (district) {
@@ -31,7 +33,7 @@ const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
       }
     });
     return counts;
-  }, [places]);
+  }, [allPlaces]);
 
   // 각 path의 중심좌표 계산 (getBBox 활용)
   const svgRef = useRef<SVGSVGElement>(null);
@@ -66,6 +68,7 @@ const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
         strokeLinejoin="round"
       >
         {districts.map(({ id, d }) => {
+          // 항상 allPlaces 기준으로만 개수 표시 (클릭해도 변하지 않음)
           const count = placeCounts[id] || 0;
           const centroid = centroids[id];
           return (

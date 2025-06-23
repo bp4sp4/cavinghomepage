@@ -8,6 +8,7 @@ import { Place } from "@/app/page";
 interface SeoulMapProps {
   onDistrictClick: (districtName: string) => void;
   places: Place[];
+  allPlaces: Place[];
 }
 
 const seoulDistricts = [
@@ -38,7 +39,11 @@ const seoulDistricts = [
   "중랑구",
 ];
 
-const SeoulMap: React.FC<SeoulMapProps> = ({ onDistrictClick, places }) => {
+const SeoulMap: React.FC<SeoulMapProps> = ({
+  onDistrictClick,
+  places,
+  allPlaces,
+}) => {
   const [geoJson, setGeoJson] = useState<FeatureCollection<
     Geometry,
     GeoJsonProperties
@@ -74,14 +79,14 @@ const SeoulMap: React.FC<SeoulMapProps> = ({ onDistrictClick, places }) => {
         }
       });
     }
-    places.forEach((place) => {
+    allPlaces.forEach((place) => {
       const district = seoulDistricts.find((d) => place.address.includes(d));
       if (district) {
         counts[district] = (counts[district] || 0) + 1;
       }
     });
     return counts;
-  }, [places, geoJson]);
+  }, [allPlaces, geoJson]);
 
   const projection = useMemo(() => {
     if (!geoJson) return null;
