@@ -10,9 +10,10 @@ interface GyeonggiMapProps {
 }
 
 // paths 배열을 districts로 변환 (id: 영문, name: 한글, d: path)
-const districts: { id: string; name: string; d: string }[] = paths.map(
-  (p: any) => ({ id: p.id, name: p.name, d: p.d })
-);
+const districts: { id: string; d: string }[] = paths.map((p: any) => ({
+  id: p.id,
+  d: p.d,
+}));
 
 const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
   places,
@@ -64,7 +65,7 @@ const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        {districts.map(({ id, name, d }) => {
+        {districts.map(({ id, d }) => {
           const count = placeCounts[id] || 0;
           const centroid = centroids[id];
           return (
