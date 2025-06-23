@@ -6,9 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import Script from "next/script";
 
-interface Place {
+import KoreaMap from "@/components/KoreaMap";
+import SeoulMap from "@/components/SeoulMap";
+import GyeonggiMap from "@/components/GyeonggiMap";
+
+export interface Place {
+  district: any;
   id: number;
   name: string;
   address: string;
@@ -187,6 +191,7 @@ const DUMMY_PLACES: Place[] = [
     lng: 126.997819,
     open_hours: "09:00~18:00",
     phone: "02-2072-2114",
+    district: undefined,
   },
   {
     id: 2,
@@ -197,6 +202,7 @@ const DUMMY_PLACES: Place[] = [
     lng: 127.049555,
     open_hours: "08:30~17:30",
     phone: "02-2019-2114",
+    district: undefined,
   },
   {
     id: 3,
@@ -207,6 +213,7 @@ const DUMMY_PLACES: Place[] = [
     lng: 127.107664,
     open_hours: "08:30~17:00",
     phone: "1688-7575",
+    district: undefined,
   },
   {
     id: 4,
@@ -217,6 +224,7 @@ const DUMMY_PLACES: Place[] = [
     lng: 126.936889,
     open_hours: "08:00~17:00",
     phone: "1599-1004",
+    district: undefined,
   },
   {
     id: 5,
@@ -227,7 +235,61 @@ const DUMMY_PLACES: Place[] = [
     lng: 127.085752,
     open_hours: "08:00~17:00",
     phone: "02-3410-2114",
+    district: undefined,
   },
+  {
+    id: 6,
+    name: "분당서울대학교병원",
+    address: "경기 성남시 분당구 구미로173번길 82",
+    category: "병원",
+    lat: 37.3595704,
+    lng: 127.105399,
+    open_hours: "08:30~17:30",
+    phone: "1588-3369",
+    district: undefined,
+  },
+  {
+    id: 7,
+    name: "아주대학교병원",
+    address: "경기 수원시 영통구 월드컵로 164",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    district: undefined,
+  },
+  {
+    id: 8,
+    name: "아주대학교병원",
+    address: "경기 연천군 연천읍 중앙로 100",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    district: undefined,
+  },
+];
+
+const REGIONS = [
+  "서울",
+  "부산",
+  "대구",
+  "인천",
+  "광주",
+  "대전",
+  "울산",
+  "경기",
+  "강원",
+  "충북",
+  "충남",
+  "전북",
+  "전남",
+  "경북",
+  "경남",
+  "제주",
+  "세종",
 ];
 
 const KakaoMapSearchComponent: React.FC = () => {
@@ -235,82 +297,157 @@ const KakaoMapSearchComponent: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<Place | null>(null);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
   const mapRef = useRef<KakaoMap | null>(null);
 
   // supabase fetchPlaces 함수 제거, 더미 데이터 기반으로 변경
-  const fetchPlaces = (keyword = "") => {
+  const fetchPlaces = (
+    keyword = "",
+    region: string | null = null,
+    city: string | null = null,
+    district: string | null = null
+  ) => {
     setLoading(true);
     setTimeout(() => {
       let filtered = DUMMY_PLACES;
+
+      if (district && region === "서울") {
+        filtered = DUMMY_PLACES.filter(
+          (p) => p.address.includes("서울") && p.address.includes(district)
+        );
+      } else if (district && region === "경기") {
+        filtered = DUMMY_PLACES.filter(
+          (p) => p.address.includes("경기") && p.address.includes(district)
+        );
+      } else if (city && region === "경기") {
+        filtered = DUMMY_PLACES.filter(
+          (p) => p.address.includes("경기") && p.address.includes(city)
+        );
+      } else if (region) {
+        filtered = DUMMY_PLACES.filter((p) => p.address.includes(region));
+      }
+
       if (keyword) {
         const lower = keyword.toLowerCase();
-        filtered = DUMMY_PLACES.filter(
+        filtered = filtered.filter(
           (p) =>
             p.name.toLowerCase().includes(lower) ||
-            p.address.toLowerCase().includes(lower) ||
-            p.category.toLowerCase().includes(lower)
+            p.address.toLowerCase().includes(lower)
         );
       }
       setPlaces(filtered);
       setLoading(false);
-    }, 300); // 로딩 효과를 위해 약간의 딜레이
+    }, 500); // 0.5초 딜레이
   };
 
   useEffect(() => {
     fetchPlaces();
-    window.scrollTo(0, 0);
   }, []);
 
-  const handleSearch = () => fetchPlaces(search);
+  const handleSearch = () =>
+    fetchPlaces(search, selectedRegion, selectedCity, selectedDistrict);
   const handleReset = () => {
-    setSearch("");
-    fetchPlaces("");
+    if (selectedDistrict) {
+      setSelectedDistrict(null);
+      fetchPlaces(search, "서울", null, null);
+    } else if (selectedCity) {
+      setSelectedCity(null);
+      setSelectedLocation(null);
+      fetchPlaces(search, "경기", null, null);
+    } else if (selectedRegion) {
+      setSelectedRegion(null);
+      setSelectedLocation(null);
+      fetchPlaces();
+    } else {
+      setSearch("");
+      fetchPlaces();
+    }
   };
 
   const handleSelect = (place: Place) => {
     setSelectedLocation(place);
+
+    if (!selectedRegion) {
+      const region = REGIONS.find((r) => place.address.includes(r));
+      if (region) {
+        setSelectedRegion(region);
+        fetchPlaces(search, region, null, null);
+      }
+    }
   };
 
-  console.log("KAKAO KEY:", process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY);
+  const handleRegionClick = (regionName: string) => {
+    setSelectedRegion(regionName);
+    setSelectedDistrict(null);
+    fetchPlaces(search, regionName, null, null);
+  };
+
+  const handleDistrictClick = (districtId: string) => {
+    setSelectedDistrict(districtId);
+    fetchPlaces(search, selectedRegion, null, districtId);
+  };
+
+  const getTitle = () => {
+    if (selectedDistrict) {
+      return `${selectedRegion} ${selectedDistrict} 요양보호사 시설 검색`;
+    }
+    if (selectedCity) {
+      return `${selectedRegion} ${selectedCity} 요양보호사 시설 검색`;
+    }
+    if (selectedRegion) {
+      return `${selectedRegion} 요양보호사 시설 검색`;
+    }
+    return "전국 요양원 시설 검색";
+  };
+
+  const renderMap = () => {
+    if (selectedRegion === "서울") {
+      return <SeoulMap onDistrictClick={handleDistrictClick} places={places} />;
+    }
+    if (selectedRegion === "경기") {
+      return (
+        <GyeonggiMap onDistrictClick={handleDistrictClick} places={places} />
+      );
+    }
+    return <KoreaMap onRegionClick={handleRegionClick} places={places} />;
+  };
 
   return (
-    <>
-      <Script
-        strategy="afterInteractive"
-        src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`}
-      />
-      <div className="flex h-screen w-screen flex-col md:flex-row">
-        <div className="flex-1 min-w-0 h-[350px] md:h-full">
-          <div className="w-full h-full">
-            {places.length > 0 ? (
-              <KakaoMap
-                locations={places}
-                selectedLocation={selectedLocation}
-                mapRef={mapRef}
-              />
-            ) : (
-              <div className="w-full h-full bg-yellow-100 flex items-center justify-center">
-                <MapPin className="w-12 h-12 text-yellow-800" />
-              </div>
-            )}
-          </div>
+    <div className="flex h-screen bg-background">
+      <div className="w-96 border-r border-border flex flex-col">
+        <div className="p-4 border-b">
+          <h1 className="text-2xl font-bold">요양원 찾기</h1>
+          <p className="text-sm text-muted-foreground">{getTitle()}</p>
         </div>
-        <div className="w-full md:w-[400px] max-w-full md:max-w-[400px] h-full bg-white shadow-lg border-l border-border flex flex-col rounded-none md:rounded-l-2xl overflow-y-auto">
-          <div className="p-6 border-b border-border flex gap-2">
-            <Input
-              placeholder="장소명, 주소, 카테고리 검색..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
-              }}
-              className="flex-1"
-            />
-            <Button onClick={handleSearch}>검색</Button>
-            <Button variant="outline" onClick={handleReset}>
-              리셋
+        {selectedRegion ? (
+          <div className="p-4">
+            <Button onClick={handleReset} className="w-full">
+              {selectedDistrict
+                ? "서울 전체 맵으로"
+                : selectedCity
+                ? "경기 전체 맵으로"
+                : "전체 맵으로 돌아가기"}
             </Button>
           </div>
+        ) : (
+          <div className="p-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="시설명 또는 지역 검색..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              />
+              <Button onClick={handleSearch}>검색</Button>
+              <Button onClick={handleReset} variant="outline">
+                리셋
+              </Button>
+            </div>
+          </div>
+        )}
+        <div className="flex-1 overflow-y-auto">
           <PlaceList
             places={places}
             onSelect={handleSelect}
@@ -318,7 +455,12 @@ const KakaoMapSearchComponent: React.FC = () => {
           />
         </div>
       </div>
-    </>
+      <main className="flex-1 flex items-center justify-center p-4 overflow-hidden">
+        <div className="w-full h-full max-w-4xl max-h-4xl aspect-w-1 aspect-h-1">
+          {renderMap()}
+        </div>
+      </main>
+    </div>
   );
 };
 
