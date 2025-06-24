@@ -14,6 +14,9 @@ import GyeongsangnamdoMap from "@/components/maps/Gyeongsangnamdo";
 import GyeongsangbukdoMap from "@/components/maps/Gyeongsangbukdo";
 import GwangjuMap from "@/components/maps/GwangjuMap";
 import ChungcheongbukdoMap from "@/components/maps/ChungcheongbukdoMap";
+import ChungcheongnamdoMap from "@/components/maps/ChungcheongnamdoMap";
+import DaeguMap from "@/components/maps/DaeguMap";
+import { DUMMY_PLACES } from "../data/dumy-places";
 
 export interface Place {
   id: number;
@@ -87,244 +90,6 @@ const PlaceList: React.FC<{
   );
 };
 
-// 더미 데이터 추가
-const DUMMY_PLACES: Place[] = [
-  {
-    id: 1,
-    name: "서울대학교병원",
-    address: "서울특별시 종로구 대학로 101",
-    category: "병원",
-    lat: 37.579617,
-    lng: 126.997819,
-    open_hours: "09:00~18:00",
-    phone: "02-2072-2114",
-    region: "서울",
-    city: "서울",
-    district: "종로구",
-  },
-  {
-    id: 2,
-    name: "강남세브란스병원",
-    address: "서울특별시 강남구 언주로 211",
-    category: "병원",
-    lat: 37.494539,
-    lng: 127.049555,
-    open_hours: "08:30~17:30",
-    phone: "02-2019-2114",
-    region: "서울",
-    city: "서울",
-    district: "강남구",
-  },
-  {
-    id: 3,
-    name: "서울아산병원",
-    address: "서울특별시 송파구 올림픽로 43길 88",
-    category: "병원",
-    lat: 37.526017,
-    lng: 127.107664,
-    open_hours: "08:30~17:00",
-    phone: "1688-7575",
-    region: "서울",
-    city: "서울",
-    district: "송파구",
-  },
-  {
-    id: 4,
-    name: "신촌세브란스병원",
-    address: "서울특별시 서대문구 연세로 50",
-    category: "병원",
-    lat: 37.563617,
-    lng: 126.936889,
-    open_hours: "08:00~17:00",
-    phone: "1599-1004",
-    region: "서울",
-    city: "서울",
-    district: "서대문구",
-  },
-  {
-    id: 5,
-    name: "삼성서울병원",
-    address: "서울특별시 강남구 일원로 81",
-    category: "병원",
-    lat: 37.488981,
-    lng: 127.085752,
-    open_hours: "08:00~17:00",
-    phone: "02-3410-2114",
-    region: "서울",
-    city: "서울",
-    district: "강남구",
-  },
-  {
-    id: 6,
-    name: "분당서울대학교병원",
-    address: "경기 성남시 분당구 구미로173번길 82",
-    category: "병원",
-    lat: 37.3595704,
-    lng: 127.105399,
-    open_hours: "08:30~17:30",
-    phone: "1588-3369",
-    region: "경기",
-    city: "성남시",
-    district: "분당구",
-  },
-  {
-    id: 7,
-    name: "아주대학교병원",
-    address: "경기 수원시 영통구 월드컵로 164",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "경기",
-    city: "수원시",
-    district: "영통구",
-  },
-  {
-    id: 8,
-    name: "아주대학교병원",
-    address: "경기 연천군 연천읍 중앙로 100",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "경기",
-    city: "연천군",
-    district: "연천읍",
-  },
-  {
-    id: 9,
-    name: "양구군 요양보호사 시설",
-    address: "강원 양구군 연천읍 중앙로 100",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "강원",
-    city: "양구군",
-    district: "양구읍",
-  },
-  {
-    id: 10,
-    name: "춘천시 요양보호사 시설",
-    address: "강원 춘천시 중앙로 100",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "강원",
-    city: "양구군",
-    district: "양구읍",
-  },
-  {
-    id: 11,
-    name: "거창군 요양보호사 시설",
-    address: "경상남도 거창군 요양보호사 시설",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "경상남도",
-    city: "경상남도",
-    district: "경상남도",
-  },
-  {
-    id: 12,
-    name: "하동군 요양보호사 시설",
-    address: "경상남도 하동군 하동읍 중앙로 100",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "경상남도",
-    city: "경상남도",
-    district: "경상남도",
-  },
-  {
-    id: 13,
-    name: "경상북도 요양보호사 시설",
-    address: "경상북도 경주시 요양보호사 시설",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "경상북도",
-    city: "경상북도",
-    district: "경상북도",
-  },
-  {
-    id: 14,
-    name: "경상북도 요양보호사 시설",
-    address: "경상북도 성주군 요양보호사 시설",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "경상북도",
-    city: "경상북도",
-    district: "경상북도",
-  },
-  {
-    id: 15,
-    name: "광주 요양보호사 시설",
-    address: "광주 광산구 요양보호사 시설",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "광주",
-    city: "광주",
-    district: "광산구",
-  },
-  {
-    id: 16,
-    name: "광주 요양보호사 시설",
-    address: "광주 동구 요양보호사 시설",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "광주",
-    city: "광주",
-    district: "동구",
-  },
-  {
-    id: 17,
-    name: "충청북도 요양보호사 시설",
-    address: "충청북도 충주시 요양보호사 시설",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "충청북도",
-    city: "충청북도",
-    district: "증평군",
-  },
-  {
-    id: 18,
-    name: "충청북도 요양보호사 시설",
-    address: "충청북도 제천시 요양보호사 시설",
-    category: "병원",
-    lat: 37.2793,
-    lng: 127.0453,
-    open_hours: "08:00~17:00",
-    phone: "1688-6114",
-    region: "충청북도",
-    city: "충청북도",
-    district: "제천시",
-  },
-];
-
 const REGIONS = [
   "서울",
   "부산",
@@ -336,7 +101,7 @@ const REGIONS = [
   "경기",
   "강원",
   "충청북도",
-  "충남",
+  "충청남도",
   "전북",
   "전남",
   "경북",
@@ -441,7 +206,7 @@ const KakaoMapSearchComponent: React.FC = () => {
   const handleDistrictClick = (districtId: string) => {
     setSelectedDistrict(districtId);
     const filtered = DUMMY_PLACES.filter(
-      (p) =>
+      (p: Place) =>
         (!selectedRegion || p.region === selectedRegion) &&
         p.address.includes(districtId)
     );
@@ -519,6 +284,24 @@ const KakaoMapSearchComponent: React.FC = () => {
     if (selectedRegion === "충청북도") {
       return (
         <ChungcheongbukdoMap
+          onDistrictClick={handleDistrictClick}
+          places={places}
+          allPlaces={DUMMY_PLACES}
+        />
+      );
+    }
+    if (selectedRegion === "충청남도") {
+      return (
+        <ChungcheongnamdoMap
+          onDistrictClick={handleDistrictClick}
+          places={places}
+          allPlaces={DUMMY_PLACES}
+        />
+      );
+    }
+    if (selectedRegion === "대구") {
+      return (
+        <DaeguMap
           onDistrictClick={handleDistrictClick}
           places={places}
           allPlaces={DUMMY_PLACES}

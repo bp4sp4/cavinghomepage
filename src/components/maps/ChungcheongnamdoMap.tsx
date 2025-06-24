@@ -1,21 +1,22 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { Place } from "@/app/page";
-import DaeguPaths from "../../data/Daegu-paths";
+import ChungcheongnamdoPaths from "../../data/Chungcheongnamdo-paths";
 
-interface DaeguMapProps {
+interface ChungcheongnamdoMapProps {
   places: Place[];
   allPlaces: Place[];
   onDistrictClick: (district: string) => void;
 }
 
 // paths의 타입을 명확히 지정
-const districts: { id: string; d: string }[] = DaeguPaths.map(
+const districts: { id: string; d: string }[] = ChungcheongnamdoPaths.map(
   (p: { id: string; d: string }) => ({ id: p.id, d: p.d })
 );
 
-// 충청북도
-
-const DeaguMap: React.FC<DaeguMapProps> = ({ allPlaces, onDistrictClick }) => {
+const ChungcheongnamdoMap: React.FC<ChungcheongnamdoMapProps> = ({
+  allPlaces,
+  onDistrictClick,
+}) => {
   // 시군구별 시설 개수 계산
   const placeCounts = useMemo(() => {
     const counts: { [key: string]: number } = {};
@@ -112,4 +113,4 @@ const DeaguMap: React.FC<DaeguMapProps> = ({ allPlaces, onDistrictClick }) => {
   );
 };
 
-export default DeaguMap;
+export default ChungcheongnamdoMap;
