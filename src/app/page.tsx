@@ -7,15 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import KoreaMap from "@/components/KoreaMap";
-import SeoulMap from "@/components/maps/SeoulMap";
-import GyeonggiMap from "@/components/maps/GyeonggiMap";
-import GangwonMap from "@/components/maps/GangwonMap";
-import GyeongsangnamdoMap from "@/components/maps/Gyeongsangnamdo";
-import GyeongsangbukdoMap from "@/components/maps/Gyeongsangbukdo";
-import GwangjuMap from "@/components/maps/GwangjuMap";
-import ChungcheongbukdoMap from "@/components/maps/ChungcheongbukdoMap";
-import ChungcheongnamdoMap from "@/components/maps/ChungcheongnamdoMap";
-import DaeguMap from "@/components/maps/DaeguMap";
+import REGION_MAP_COMPONENTS from "@/components/Region";
 import { DUMMY_PLACES } from "../data/dumy-places";
 
 export interface Place {
@@ -102,7 +94,7 @@ const REGIONS = [
   "강원",
   "충청북도",
   "충청남도",
-  "전북",
+  "전라북도",
   "전남",
   "경북",
   "경상남도",
@@ -227,81 +219,10 @@ const KakaoMapSearchComponent: React.FC = () => {
   };
 
   const renderMap = () => {
-    if (selectedRegion === "서울") {
+    if (selectedRegion && REGION_MAP_COMPONENTS[selectedRegion]) {
+      const RegionMapComponent = REGION_MAP_COMPONENTS[selectedRegion];
       return (
-        <SeoulMap
-          onDistrictClick={handleDistrictClick}
-          places={places}
-          allPlaces={DUMMY_PLACES}
-        />
-      );
-    }
-    if (selectedRegion === "경기") {
-      return (
-        <GyeonggiMap
-          onDistrictClick={handleDistrictClick}
-          places={places}
-          allPlaces={DUMMY_PLACES}
-        />
-      );
-    }
-    if (selectedRegion === "강원") {
-      return (
-        <GangwonMap
-          onDistrictClick={handleDistrictClick}
-          places={places}
-          allPlaces={DUMMY_PLACES}
-        />
-      );
-    }
-    if (selectedRegion === "경상남도") {
-      return (
-        <GyeongsangnamdoMap
-          onDistrictClick={handleDistrictClick}
-          places={places}
-          allPlaces={DUMMY_PLACES}
-        />
-      );
-    }
-    if (selectedRegion === "경상북도") {
-      return (
-        <GyeongsangbukdoMap
-          onDistrictClick={handleDistrictClick}
-          places={places}
-          allPlaces={DUMMY_PLACES}
-        />
-      );
-    }
-    if (selectedRegion === "광주") {
-      return (
-        <GwangjuMap
-          onDistrictClick={handleDistrictClick}
-          places={places}
-          allPlaces={DUMMY_PLACES}
-        />
-      );
-    }
-    if (selectedRegion === "충청북도") {
-      return (
-        <ChungcheongbukdoMap
-          onDistrictClick={handleDistrictClick}
-          places={places}
-          allPlaces={DUMMY_PLACES}
-        />
-      );
-    }
-    if (selectedRegion === "충청남도") {
-      return (
-        <ChungcheongnamdoMap
-          onDistrictClick={handleDistrictClick}
-          places={places}
-          allPlaces={DUMMY_PLACES}
-        />
-      );
-    }
-    if (selectedRegion === "대구") {
-      return (
-        <DaeguMap
+        <RegionMapComponent
           onDistrictClick={handleDistrictClick}
           places={places}
           allPlaces={DUMMY_PLACES}
