@@ -235,8 +235,13 @@ const KakaoMapSearchComponent: React.FC = () => {
   return (
     <div className="flex h-screen bg-background">
       <div className="w-96 border-r border-border flex flex-col">
-        <div className="p-4 border-b">
-          <h1 className="text-2xl font-bold">요양원 찾기</h1>
+        <div className="p-4 border-b flex items-left gap-2 flex-col">
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <span>
+              <img src="/logo2.png" alt="logo" className="w-7 h-7" />
+            </span>
+            한평생 돌봄지도
+          </h1>
           <p className="text-sm text-muted-foreground">{getTitle()}</p>
         </div>
         {selectedRegion ? (

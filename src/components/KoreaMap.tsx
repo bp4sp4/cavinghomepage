@@ -137,6 +137,31 @@ const regionLabelPositions: { [key: string]: { x: number; y: number } } = {
   경상남도: { x: 569.3, y: 604 },
 };
 
+// 지도 중심좌표(pos)와 지역명을 받아 위치를 보정하는 함수
+function getLabelPosition(
+  region: { name: string },
+  pos: { x: number; y: number }
+) {
+  let { x, y } = pos;
+  switch (region.name) {
+    case "세종":
+      x += 18;
+      y -= 10;
+      break;
+    case "충청남도":
+      x -= 18;
+      y += 10;
+      break;
+    case "대전":
+      y += 18;
+      break;
+    // 필요시 다른 지역도 추가
+    default:
+      break;
+  }
+  return { x, y };
+}
+
 const KoreaMap: React.FC<KoreaMapProps> = ({ onRegionClick, places }) => {
   const placeCounts = useMemo(() => {
     const counts: { [key: string]: number } = {};
@@ -175,27 +200,46 @@ const KoreaMap: React.FC<KoreaMapProps> = ({ onRegionClick, places }) => {
             />
           ))}
         </g>
+
         <g>
           {regions.map((region) => {
             const count = placeCounts[region.name] || 0;
             if (!count) return null;
             const pos = regionLabelPositions[region.name];
             if (!pos) return null;
+            const { x, y } = getLabelPosition(region, pos);
             return (
-              <text
-                key={`${region.id}-text`}
-                x={pos.x}
-                y={pos.y}
-                textAnchor="middle"
-                alignmentBaseline="middle"
-                fontSize={32}
-                fontWeight={700}
-                fill="#222"
-                pointerEvents="none"
-                style={{ userSelect: "none" }}
-              >
-                {`${region.name} (${count})`}
-              </text>
+              <React.Fragment key={region.id}>
+                <text
+                  x={x}
+                  y={y}
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+                  fontSize={18}
+                  fontWeight={900}
+                  fill="#222"
+                  stroke="#fff"
+                  strokeWidth={4}
+                  paintOrder="stroke"
+                  pointerEvents="none"
+                  style={{ userSelect: "none" }}
+                >
+                  {`${region.name} (${count})`}
+                </text>
+                <text
+                  x={x}
+                  y={y}
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+                  fontSize={18}
+                  fontWeight={900}
+                  fill="#222"
+                  pointerEvents="none"
+                  style={{ userSelect: "none" }}
+                >
+                  {`${region.name} (${count})`}
+                </text>
+              </React.Fragment>
             );
           })}
         </g>
