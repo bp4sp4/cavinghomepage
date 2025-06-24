@@ -10,8 +10,19 @@ import DaeguMap from "./maps/DaeguMap";
 import JejuIslandMap from "./maps/JejuIsland";
 import JeollabukdoMap from "./maps/JeollabukdoMap";
 import JeollanamdoMap from "./maps/JeollanamdoMap";
+import DaejeonMap from "./maps/DaejeonMap";
+import type { Place } from "../data/dumy-places";
 
-const REGION_MAP_COMPONENTS: Record<string, React.ComponentType<any>> = {
+export type RegionMapProps = {
+  onDistrictClick: (districtId: string) => void;
+  places: Place[];
+  allPlaces: Place[];
+};
+
+const REGION_MAP_COMPONENTS: Record<
+  string,
+  React.ComponentType<RegionMapProps>
+> = {
   서울: SeoulMap,
   경기: GyeonggiMap,
   강원: GangwonMap,
@@ -24,6 +35,7 @@ const REGION_MAP_COMPONENTS: Record<string, React.ComponentType<any>> = {
   제주: JejuIslandMap,
   전라북도: JeollabukdoMap,
   전라남도: JeollanamdoMap,
+  대전: DaejeonMap,
 };
 
 export default REGION_MAP_COMPONENTS;

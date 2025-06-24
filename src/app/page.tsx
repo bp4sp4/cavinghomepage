@@ -200,7 +200,7 @@ const KakaoMapSearchComponent: React.FC = () => {
     const filtered = DUMMY_PLACES.filter(
       (p: Place) =>
         (!selectedRegion || p.region === selectedRegion) &&
-        p.address.includes(districtId)
+        p.district === districtId
     );
     setPlaces(filtered);
   };
@@ -230,6 +230,12 @@ const KakaoMapSearchComponent: React.FC = () => {
       );
     }
     return <KoreaMap onRegionClick={handleRegionClick} places={places} />;
+  };
+
+  const getDistrictCount = (districtName: string) => {
+    return DUMMY_PLACES.filter(
+      (p) => p.region === selectedRegion && p.district === districtName
+    ).length;
   };
 
   return (
