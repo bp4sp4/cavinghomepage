@@ -1,20 +1,19 @@
-"use client";
-
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { Place } from "@/app/page";
-import paths from "../../scripts/gyeonggi-paths";
+import gangwonPaths from "../../scripts/gangwon-paths";
 
-interface GyeonggiMapProps {
+interface GangwonMapProps {
   places: Place[];
   allPlaces: Place[];
-  onDistrictClick: (districtName: string) => void;
+  onDistrictClick: (district: string) => void;
 }
 
-const districts: { id: string; d: string }[] = paths.map(
+// paths의 타입을 명확히 지정
+const districts: { id: string; d: string }[] = gangwonPaths.map(
   (p: { id: string; d: string }) => ({ id: p.id, d: p.d })
 );
 
-const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
+const GangwonMap: React.FC<GangwonMapProps> = ({
   allPlaces,
   onDistrictClick,
 }) => {
@@ -23,7 +22,6 @@ const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
     const counts: { [key: string]: number } = {};
     districts.forEach((d) => (counts[d.id] = 0));
     allPlaces.forEach((place) => {
-      // id(한글 시군구명)가 주소에 포함되어 있으면 카운트
       const district = districts.find((d) => place.address.includes(d.id));
       if (district) {
         counts[district.id] = (counts[district.id] || 0) + 1;
@@ -65,7 +63,6 @@ const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
         strokeLinejoin="round"
       >
         {districts.map(({ id, d }) => {
-          // 항상 allPlaces 기준으로만 개수 표시 (클릭해도 변하지 않음)
           const count = placeCounts[id] || 0;
           const centroid = centroids[id];
           return (
@@ -116,4 +113,4 @@ const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
   );
 };
 
-export default GyeonggiMap;
+export default GangwonMap;

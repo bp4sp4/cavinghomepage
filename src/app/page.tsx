@@ -9,9 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import KoreaMap from "@/components/KoreaMap";
 import SeoulMap from "@/components/SeoulMap";
 import GyeonggiMap from "@/components/GyeonggiMap";
+import GangwonMap from "@/components/GangwonMap";
 
 export interface Place {
-  district: string | undefined;
   id: number;
   name: string;
   address: string;
@@ -20,6 +20,9 @@ export interface Place {
   lng: number;
   open_hours: string;
   phone: string;
+  region: string; // ex: "경기"
+  city?: string; // ex: "성남시"
+  district?: string; // ex: "분당구"
 }
 
 interface KakaoMap {
@@ -190,7 +193,9 @@ const DUMMY_PLACES: Place[] = [
     lng: 126.997819,
     open_hours: "09:00~18:00",
     phone: "02-2072-2114",
-    district: undefined,
+    region: "서울",
+    city: "서울",
+    district: "종로구",
   },
   {
     id: 2,
@@ -201,7 +206,9 @@ const DUMMY_PLACES: Place[] = [
     lng: 127.049555,
     open_hours: "08:30~17:30",
     phone: "02-2019-2114",
-    district: undefined,
+    region: "서울",
+    city: "서울",
+    district: "강남구",
   },
   {
     id: 3,
@@ -212,7 +219,9 @@ const DUMMY_PLACES: Place[] = [
     lng: 127.107664,
     open_hours: "08:30~17:00",
     phone: "1688-7575",
-    district: undefined,
+    region: "서울",
+    city: "서울",
+    district: "송파구",
   },
   {
     id: 4,
@@ -223,7 +232,9 @@ const DUMMY_PLACES: Place[] = [
     lng: 126.936889,
     open_hours: "08:00~17:00",
     phone: "1599-1004",
-    district: undefined,
+    region: "서울",
+    city: "서울",
+    district: "서대문구",
   },
   {
     id: 5,
@@ -234,7 +245,9 @@ const DUMMY_PLACES: Place[] = [
     lng: 127.085752,
     open_hours: "08:00~17:00",
     phone: "02-3410-2114",
-    district: undefined,
+    region: "서울",
+    city: "서울",
+    district: "강남구",
   },
   {
     id: 6,
@@ -245,7 +258,9 @@ const DUMMY_PLACES: Place[] = [
     lng: 127.105399,
     open_hours: "08:30~17:30",
     phone: "1588-3369",
-    district: undefined,
+    region: "경기",
+    city: "성남시",
+    district: "분당구",
   },
   {
     id: 7,
@@ -256,7 +271,9 @@ const DUMMY_PLACES: Place[] = [
     lng: 127.0453,
     open_hours: "08:00~17:00",
     phone: "1688-6114",
-    district: undefined,
+    region: "경기",
+    city: "수원시",
+    district: "영통구",
   },
   {
     id: 8,
@@ -267,7 +284,35 @@ const DUMMY_PLACES: Place[] = [
     lng: 127.0453,
     open_hours: "08:00~17:00",
     phone: "1688-6114",
-    district: undefined,
+    region: "경기",
+    city: "연천군",
+    district: "연천읍",
+  },
+  {
+    id: 9,
+    name: "양구군 요양보호사 시설",
+    address: "강원 양구군 연천읍 중앙로 100",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    region: "강원",
+    city: "양구군",
+    district: "양구읍",
+  },
+  {
+    id: 10,
+    name: "춘천시 요양보호사 시설",
+    address: "강원 춘천시 중앙로 100",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    region: "강원",
+    city: "양구군",
+    district: "양구읍",
   },
 ];
 
@@ -299,7 +344,34 @@ const KakaoMapSearchComponent: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
 
-  // supabase fetchPlaces 함수 제거, 더미 데이터 기반으로 변경
+  // 일반화된 필터 함수
+  const filterPlaces = (
+    places: Place[],
+    {
+      region,
+      city,
+      district,
+      keyword,
+    }: { region?: string; city?: string; district?: string; keyword?: string }
+  ) => {
+    return places.filter((p) => {
+      if (region && p.region !== region) return false;
+      if (city && p.city !== city) return false;
+      if (district && p.district !== district) return false;
+      if (keyword) {
+        const lower = keyword.toLowerCase();
+        if (
+          !p.name.toLowerCase().includes(lower) &&
+          !p.address.toLowerCase().includes(lower)
+        ) {
+          return false;
+        }
+      }
+      return true;
+    });
+  };
+
+  // fetchPlaces 함수 리팩토링
   const fetchPlaces = (
     keyword = "",
     region: string | null = null,
@@ -308,35 +380,15 @@ const KakaoMapSearchComponent: React.FC = () => {
   ) => {
     setLoading(true);
     setTimeout(() => {
-      let filtered = DUMMY_PLACES;
-
-      if (district && region === "서울") {
-        filtered = DUMMY_PLACES.filter(
-          (p) => p.address.includes("서울") && p.address.includes(district)
-        );
-      } else if (district && region === "경기") {
-        filtered = DUMMY_PLACES.filter(
-          (p) => p.address.includes("경기") && p.address.includes(district)
-        );
-      } else if (city && region === "경기") {
-        filtered = DUMMY_PLACES.filter(
-          (p) => p.address.includes("경기") && p.address.includes(city)
-        );
-      } else if (region) {
-        filtered = DUMMY_PLACES.filter((p) => p.address.includes(region));
-      }
-
-      if (keyword) {
-        const lower = keyword.toLowerCase();
-        filtered = filtered.filter(
-          (p) =>
-            p.name.toLowerCase().includes(lower) ||
-            p.address.toLowerCase().includes(lower)
-        );
-      }
+      const filtered = filterPlaces(DUMMY_PLACES, {
+        region: region ?? undefined,
+        city: city ?? undefined,
+        district: district ?? undefined,
+        keyword,
+      });
       setPlaces(filtered);
       setLoading(false);
-    }, 500); // 0.5초 딜레이
+    }, 500);
   };
 
   useEffect(() => {
@@ -379,7 +431,12 @@ const KakaoMapSearchComponent: React.FC = () => {
 
   const handleDistrictClick = (districtId: string) => {
     setSelectedDistrict(districtId);
-    fetchPlaces(search, selectedRegion, null, districtId);
+    const filtered = DUMMY_PLACES.filter(
+      (p) =>
+        (!selectedRegion || p.region === selectedRegion) &&
+        p.address.includes(districtId)
+    );
+    setPlaces(filtered);
   };
 
   const getTitle = () => {
@@ -414,6 +471,16 @@ const KakaoMapSearchComponent: React.FC = () => {
         />
       );
     }
+    if (selectedRegion === "강원") {
+      return (
+        <GangwonMap
+          onDistrictClick={handleDistrictClick}
+          places={places}
+          allPlaces={DUMMY_PLACES}
+        />
+      );
+    }
+
     return <KoreaMap onRegionClick={handleRegionClick} places={places} />;
   };
 
