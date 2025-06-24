@@ -1,19 +1,19 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { Place } from "@/app/page";
-import gyeongsangnamdoPaths from "../data/경상남도-paths";
+import gyeongsangbukdoPaths from "../../data/Gyeongsangbukdo-paths";
 
-interface GyeongsangnamdoMapProps {
+interface GyeongsangbukdoMapProps {
   places: Place[];
   allPlaces: Place[];
   onDistrictClick: (district: string) => void;
 }
 
 // paths의 타입을 명확히 지정
-const districts: { id: string; d: string }[] = gyeongsangnamdoPaths.map(
+const districts: { id: string; d: string }[] = gyeongsangbukdoPaths.map(
   (p: { id: string; d: string }) => ({ id: p.id, d: p.d })
 );
 
-const GyeongsangnamdoMap: React.FC<GyeongsangnamdoMapProps> = ({
+const GyeongsangbukdoMap: React.FC<GyeongsangbukdoMapProps> = ({
   allPlaces,
   onDistrictClick,
 }) => {
@@ -113,4 +113,4 @@ const GyeongsangnamdoMap: React.FC<GyeongsangnamdoMapProps> = ({
   );
 };
 
-export default GyeongsangnamdoMap;
+export default GyeongsangbukdoMap;

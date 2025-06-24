@@ -1,19 +1,19 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { Place } from "@/app/page";
-import gangwonPaths from "../data/강원도-paths";
+import gwangjuPaths from "../../data/Gwangju-paths";
 
-interface GangwonMapProps {
+interface GwangjuMapProps {
   places: Place[];
   allPlaces: Place[];
   onDistrictClick: (district: string) => void;
 }
 
 // paths의 타입을 명확히 지정
-const districts: { id: string; d: string }[] = gangwonPaths.map(
+const districts: { id: string; d: string }[] = gwangjuPaths.map(
   (p: { id: string; d: string }) => ({ id: p.id, d: p.d })
 );
 
-const GangwonMap: React.FC<GangwonMapProps> = ({
+const GwangjuMap: React.FC<GwangjuMapProps> = ({
   allPlaces,
   onDistrictClick,
 }) => {
@@ -113,4 +113,4 @@ const GangwonMap: React.FC<GangwonMapProps> = ({
   );
 };
 
-export default GangwonMap;
+export default GwangjuMap;

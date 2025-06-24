@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import KoreaMap from "@/components/KoreaMap";
-import SeoulMap from "@/components/SeoulMap";
-import GyeonggiMap from "@/components/GyeonggiMap";
-import GangwonMap from "@/components/GangwonMap";
-import GyeongsangnamdoMap from "@/components/Gyeongsangnamdo";
-import GyeongsangbukdoMap from "@/components/Gyeongsangbukdo";
+import SeoulMap from "@/components/maps/SeoulMap";
+import GyeonggiMap from "@/components/maps/GyeonggiMap";
+import GangwonMap from "@/components/maps/GangwonMap";
+import GyeongsangnamdoMap from "@/components/maps/Gyeongsangnamdo";
+import GyeongsangbukdoMap from "@/components/maps/Gyeongsangbukdo";
+import GwangjuMap from "@/components/maps/GwangjuMap";
+import ChungcheongbukdoMap from "@/components/maps/ChungcheongbukdoMap";
 
 export interface Place {
   id: number;
@@ -269,6 +271,58 @@ const DUMMY_PLACES: Place[] = [
     city: "경상북도",
     district: "경상북도",
   },
+  {
+    id: 15,
+    name: "광주 요양보호사 시설",
+    address: "광주 광산구 요양보호사 시설",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    region: "광주",
+    city: "광주",
+    district: "광산구",
+  },
+  {
+    id: 16,
+    name: "광주 요양보호사 시설",
+    address: "광주 동구 요양보호사 시설",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    region: "광주",
+    city: "광주",
+    district: "동구",
+  },
+  {
+    id: 17,
+    name: "충청북도 요양보호사 시설",
+    address: "충청북도 충주시 요양보호사 시설",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    region: "충청북도",
+    city: "충청북도",
+    district: "증평군",
+  },
+  {
+    id: 18,
+    name: "충청북도 요양보호사 시설",
+    address: "충청북도 제천시 요양보호사 시설",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    region: "충청북도",
+    city: "충청북도",
+    district: "제천시",
+  },
 ];
 
 const REGIONS = [
@@ -281,7 +335,7 @@ const REGIONS = [
   "울산",
   "경기",
   "강원",
-  "충북",
+  "충청북도",
   "충남",
   "전북",
   "전남",
@@ -453,7 +507,24 @@ const KakaoMapSearchComponent: React.FC = () => {
         />
       );
     }
-
+    if (selectedRegion === "광주") {
+      return (
+        <GwangjuMap
+          onDistrictClick={handleDistrictClick}
+          places={places}
+          allPlaces={DUMMY_PLACES}
+        />
+      );
+    }
+    if (selectedRegion === "충청북도") {
+      return (
+        <ChungcheongbukdoMap
+          onDistrictClick={handleDistrictClick}
+          places={places}
+          allPlaces={DUMMY_PLACES}
+        />
+      );
+    }
     return <KoreaMap onRegionClick={handleRegionClick} places={places} />;
   };
 
