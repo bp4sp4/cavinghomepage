@@ -109,10 +109,11 @@ const regionNameMapping: { [key: string]: string } = {
   충남: "chungnam",
   전북: "jeonbuk",
   전남: "jeonnam",
-  경북: "gyeongbuk",
+  경상북도: "gyeongbuk",
   경남: "gyeongnam",
   제주: "jeju",
   세종: "sejong",
+  경상남도: "gyeongnam",
 };
 
 const regionLabelPositions: { [key: string]: { x: number; y: number } } = {
@@ -127,12 +128,13 @@ const regionLabelPositions: { [key: string]: { x: number; y: number } } = {
   전북: { x: 418.3, y: 536.1 },
   전남: { x: 385.4, y: 679.8 },
   광주: { x: 385.3, y: 625.7 },
-  경북: { x: 638.8, y: 413.4 },
+  경상북도: { x: 638.8, y: 413.4 },
   대구: { x: 617.1, y: 509.1 },
   경남: { x: 569.3, y: 604 },
   부산: { x: 676.3, y: 628.2 },
   울산: { x: 698.3, y: 576.3 },
   제주: { x: 334.9, y: 924.9 },
+  경상남도: { x: 569.3, y: 604 },
 };
 
 const KoreaMap: React.FC<KoreaMapProps> = ({ onRegionClick, places }) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { MapPin, Clock, Phone } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import KoreaMap from "@/components/KoreaMap";
 import SeoulMap from "@/components/SeoulMap";
 import GyeonggiMap from "@/components/GyeonggiMap";
 import GangwonMap from "@/components/GangwonMap";
+import GyeongsangnamdoMap from "@/components/Gyeongsangnamdo";
+import GyeongsangbukdoMap from "@/components/Gyeongsangbukdo";
 
 export interface Place {
   id: number;
@@ -24,105 +26,6 @@ export interface Place {
   city?: string; // ex: "성남시"
   district?: string; // ex: "분당구"
 }
-
-interface KakaoMap {
-  setLevel: (level: number) => void;
-  panTo: (latlng: { getLat: () => number; getLng: () => number }) => void;
-}
-
-declare global {
-  interface Window {
-    kakao: {
-      maps: {
-        Map: new (container: HTMLElement, options: unknown) => KakaoMap;
-        LatLng: new (lat: number, lng: number) => {
-          getLat: () => number;
-          getLng: () => number;
-        };
-        Marker: new (options: unknown) => unknown;
-        InfoWindow: new (options: { content: string }) => {
-          open: (map: KakaoMap, marker: unknown) => void;
-        };
-        load: (callback: () => void) => void;
-      };
-    };
-  }
-}
-
-const KakaoMap: React.FC<{
-  locations: Place[];
-  selectedLocation: Place | null;
-  mapRef: React.MutableRefObject<KakaoMap | null>;
-}> = ({ locations, selectedLocation, mapRef }) => {
-  const mapDivRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined" || locations.length === 0) return;
-
-    // kakao.maps가 로드될 때까지 대기
-    const waitForKakao = () => {
-      if (
-        window.kakao &&
-        window.kakao.maps &&
-        typeof window.kakao.maps.load === "function"
-      ) {
-        window.kakao.maps.load(() => {
-          const container = mapDivRef.current;
-          if (!container) return;
-
-          const center = new window.kakao.maps.LatLng(
-            locations[0].lat,
-            locations[0].lng
-          );
-          const options = {
-            center,
-            level: 12,
-          };
-          const map = new window.kakao.maps.Map(container, options);
-          mapRef.current = map;
-
-          locations.forEach((loc) => {
-            const marker = new window.kakao.maps.Marker({
-              position: new window.kakao.maps.LatLng(loc.lat, loc.lng),
-              map,
-              title: loc.name,
-            });
-
-            const iw = new window.kakao.maps.InfoWindow({
-              content: `<div style='padding:8px 12px;font-size:14px;'>${loc.name}</div>`,
-            });
-
-            if (selectedLocation && loc.id === selectedLocation.id) {
-              iw.open(map, marker);
-            }
-          });
-
-          if (
-            selectedLocation &&
-            mapRef.current &&
-            typeof mapRef.current.setLevel === "function" &&
-            typeof mapRef.current.panTo === "function"
-          ) {
-            mapRef.current.setLevel(3);
-            mapRef.current.panTo(
-              new window.kakao.maps.LatLng(
-                selectedLocation.lat,
-                selectedLocation.lng
-              )
-            );
-          }
-        });
-      } else {
-        // 아직 로드 안 됐으면 100ms 후 재시도
-        setTimeout(waitForKakao, 100);
-      }
-    };
-
-    waitForKakao();
-  }, [locations, selectedLocation, mapRef]);
-
-  return <div ref={mapDivRef} style={{ width: "100%", height: "100%" }} />;
-};
 
 const PlaceList: React.FC<{
   places: Place[];
@@ -314,6 +217,58 @@ const DUMMY_PLACES: Place[] = [
     city: "양구군",
     district: "양구읍",
   },
+  {
+    id: 11,
+    name: "거창군 요양보호사 시설",
+    address: "경상남도 거창군 요양보호사 시설",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    region: "경상남도",
+    city: "경상남도",
+    district: "경상남도",
+  },
+  {
+    id: 12,
+    name: "하동군 요양보호사 시설",
+    address: "경상남도 하동군 하동읍 중앙로 100",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    region: "경상남도",
+    city: "경상남도",
+    district: "경상남도",
+  },
+  {
+    id: 13,
+    name: "경상북도 요양보호사 시설",
+    address: "경상북도 경주시 요양보호사 시설",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    region: "경상북도",
+    city: "경상북도",
+    district: "경상북도",
+  },
+  {
+    id: 14,
+    name: "경상북도 요양보호사 시설",
+    address: "경상북도 성주군 요양보호사 시설",
+    category: "병원",
+    lat: 37.2793,
+    lng: 127.0453,
+    open_hours: "08:00~17:00",
+    phone: "1688-6114",
+    region: "경상북도",
+    city: "경상북도",
+    district: "경상북도",
+  },
 ];
 
 const REGIONS = [
@@ -331,7 +286,7 @@ const REGIONS = [
   "전북",
   "전남",
   "경북",
-  "경남",
+  "경상남도",
   "제주",
   "세종",
 ];
@@ -474,6 +429,24 @@ const KakaoMapSearchComponent: React.FC = () => {
     if (selectedRegion === "강원") {
       return (
         <GangwonMap
+          onDistrictClick={handleDistrictClick}
+          places={places}
+          allPlaces={DUMMY_PLACES}
+        />
+      );
+    }
+    if (selectedRegion === "경상남도") {
+      return (
+        <GyeongsangnamdoMap
+          onDistrictClick={handleDistrictClick}
+          places={places}
+          allPlaces={DUMMY_PLACES}
+        />
+      );
+    }
+    if (selectedRegion === "경상북도") {
+      return (
+        <GyeongsangbukdoMap
           onDistrictClick={handleDistrictClick}
           places={places}
           allPlaces={DUMMY_PLACES}
