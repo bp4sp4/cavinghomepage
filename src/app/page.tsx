@@ -232,12 +232,6 @@ const KakaoMapSearchComponent: React.FC = () => {
     return <KoreaMap onRegionClick={handleRegionClick} places={places} />;
   };
 
-  const getDistrictCount = (districtName: string) => {
-    return DUMMY_PLACES.filter(
-      (p) => p.region === selectedRegion && p.district === districtName
-    ).length;
-  };
-
   return (
     <div className="flex h-screen bg-background">
       <div className="w-96 border-r border-border flex flex-col">
