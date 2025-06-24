@@ -14,6 +14,26 @@ const districts: { id: string; d: string }[] = paths.map(
   (p: { id: string; d: string }) => ({ id: p.id, d: p.d })
 );
 
+// 시군구별 라벨 위치 오프셋 (겹치는 곳만 추가)
+const labelOffsets: { [id: string]: { x?: number; y?: number } } = {
+  "수원시 장안구": { x: 0, y: -15 },
+  "수원시 권선구": { x: 0, y: 15 },
+  "수원시 팔달구": { x: 20, y: 0 },
+  "수원시 영통구": { x: -20, y: 0 },
+  "고양시 덕양구": { x: 0, y: -15 },
+  "고양시 일산동구": { x: 15, y: 10 },
+  "고양시 일산서구": { x: -15, y: 10 },
+  "성남시 수정구": { x: 0, y: -15 },
+  "성남시 중원구": { x: 15, y: 10 },
+  "성남시 분당구": { x: -15, y: 10 },
+  "안산시 단원구": { x: 0, y: -15 },
+  "안산시 상록구": { x: 0, y: 15 },
+  "안양시 만안구": { x: 0, y: -15 },
+  "안양시 동안구": { x: 0, y: 15 },
+  부천시: { x: 0, y: -25 },
+  // 필요시 추가
+};
+
 const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
   allPlaces,
   onDistrictClick,
@@ -81,11 +101,11 @@ const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
               {centroid && (
                 <>
                   <text
-                    x={centroid.x}
-                    y={centroid.y}
+                    x={centroid.x + (labelOffsets[id]?.x || 0)}
+                    y={centroid.y + (labelOffsets[id]?.y || 0)}
                     textAnchor="middle"
                     alignmentBaseline="middle"
-                    fontSize={18}
+                    fontSize={14}
                     fontWeight={700}
                     fill="#222"
                     pointerEvents="none"
@@ -94,11 +114,11 @@ const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
                     {id}
                   </text>
                   <text
-                    x={centroid.x}
-                    y={centroid.y + 22}
+                    x={centroid.x + (labelOffsets[id]?.x || 0)}
+                    y={centroid.y + 22 + (labelOffsets[id]?.y || 0)}
                     textAnchor="middle"
                     alignmentBaseline="middle"
-                    fontSize={16}
+                    fontSize={14}
                     fontWeight={700}
                     fill="#2563eb"
                     pointerEvents="none"
