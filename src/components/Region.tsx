@@ -11,6 +11,10 @@ import JejuIslandMap from "./maps/JejuIsland";
 import JeollabukdoMap from "./maps/JeollabukdoMap";
 import JeollanamdoMap from "./maps/JeollanamdoMap";
 import DaejeonMap from "./maps/DaejeonMap";
+import IncheonMap from "./maps/IncheonMap";
+import BusanMap from "./maps/BusanMap";
+import UlsanMap from "./maps/UlsanMap";
+import SejongMap from "./maps/SejongMap";
 import type { Place } from "../data/dumy-places";
 
 export type RegionMapProps = {
@@ -36,6 +40,10 @@ const REGION_MAP_COMPONENTS: Record<
   전라북도: JeollabukdoMap,
   전라남도: JeollanamdoMap,
   대전: DaejeonMap,
+  인천: IncheonMap,
+  부산: BusanMap,
+  울산: UlsanMap,
+  세종: SejongMap,
 };
 
 export default REGION_MAP_COMPONENTS;
