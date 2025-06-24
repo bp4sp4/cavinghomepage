@@ -400,10 +400,10 @@ const KakaoMapSearchComponent: React.FC = () => {
   const handleReset = () => {
     if (selectedDistrict) {
       setSelectedDistrict(null);
-      fetchPlaces(search, "서울", null, null);
+      fetchPlaces(search, selectedRegion, null, null);
     } else if (selectedCity) {
       setSelectedCity(null);
-      fetchPlaces(search, "경기", null, null);
+      fetchPlaces(search, selectedRegion, null, null);
     } else if (selectedRegion) {
       setSelectedRegion(null);
       fetchPlaces();
@@ -495,11 +495,9 @@ const KakaoMapSearchComponent: React.FC = () => {
           <div className="p-4">
             <Button onClick={handleReset} className="w-full">
               {selectedDistrict
-                ? selectedRegion === "경기"
-                  ? "경기 전체 맵으로"
-                  : "서울 전체 맵으로"
+                ? `${selectedRegion} 전체 맵으로`
                 : selectedCity
-                ? "경기 전체 맵으로"
+                ? `${selectedRegion} 전체 맵으로`
                 : "전체 맵으로 돌아가기"}
             </Button>
           </div>

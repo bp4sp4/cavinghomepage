@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { Place } from "@/app/page";
-import gangwonPaths from "../../scripts/gangwon-paths";
+import gangwonPaths from "../data/강원도-paths";
 
 interface GangwonMapProps {
   places: Place[];

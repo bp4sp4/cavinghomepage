@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { Place } from "@/app/page";
-import paths from "../../scripts/gyeonggi-paths";
+import paths from "../data/경기도-paths";
 
 interface GyeonggiMapProps {
   places: Place[];
