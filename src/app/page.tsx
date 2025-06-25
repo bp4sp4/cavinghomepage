@@ -31,8 +31,7 @@ const PlaceList: React.FC<{
   places: Place[];
   onSelect: (place: Place) => void;
   loading: boolean;
-  selectedDistrict?: string;
-}> = ({ places, onSelect, loading, selectedDistrict }) => {
+}> = ({ places, onSelect, loading }) => {
   if (loading) {
     return (
       <div className="p-4 space-y-3">
@@ -283,7 +282,6 @@ const KakaoMapSearchComponent: React.FC = () => {
             places={places}
             onSelect={handleSelect}
             loading={loading}
-            selectedDistrict={selectedDistrict}
           />
         </div>
       </div>

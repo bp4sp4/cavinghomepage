@@ -7,8 +7,8 @@ import paths from "../../data/gyeonggi-paths";
 interface GyeonggiMapProps {
   places: Place[];
   allPlaces: Place[];
-  onDistrictClick: (districtName: string) => void;
-  selectedDistrict?: string;
+  onDistrictClick: (districtId: string) => void;
+  selectedDistrict?: string | null;
 }
 
 const districts: { id: string; d: string }[] = paths.map(
@@ -44,12 +44,11 @@ const labelOffsets: {
 };
 
 const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
+  places,
   allPlaces,
   onDistrictClick,
   selectedDistrict,
 }) => {
-  console.log("GyeonggiMap selectedDistrict:", selectedDistrict);
-
   // 시군구별 시설 개수 계산
   const placeCounts = useMemo(() => {
     const counts: { [key: string]: number } = {};
