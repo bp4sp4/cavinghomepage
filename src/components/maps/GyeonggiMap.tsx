@@ -44,7 +44,6 @@ const labelOffsets: {
 };
 
 const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
-  places,
   allPlaces,
   onDistrictClick,
   selectedDistrict,
