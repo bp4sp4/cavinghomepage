@@ -89,8 +89,8 @@ export const DUMMY_PLACES: Place[] = [
     open_hours: "08:30~17:30",
     phone: "1588-3369",
     region: "경기",
-    city: "성남시",
-    district: "분당구",
+    city: "분",
+    district: "성남시 분당구",
   },
   {
     id: 7,
@@ -103,7 +103,7 @@ export const DUMMY_PLACES: Place[] = [
     phone: "1688-6114",
     region: "경기",
     city: "수원시",
-    district: "영통구",
+    district: "수원시 영통구",
   },
   {
     id: 8,

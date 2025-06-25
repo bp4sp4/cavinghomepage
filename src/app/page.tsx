@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import KoreaMap from "@/components/KoreaMap";
 import REGION_MAP_COMPONENTS from "@/components/Region";
 import { DUMMY_PLACES } from "../data/dumy-places";
+import paths from "../data/gyeonggi-paths";
 
 export interface Place {
   id: number;
@@ -24,11 +25,14 @@ export interface Place {
   district?: string; // ex: "분당구"
 }
 
+const districts = paths.map((p) => ({ id: p.id, d: p.d }));
+
 const PlaceList: React.FC<{
   places: Place[];
   onSelect: (place: Place) => void;
   loading: boolean;
-}> = ({ places, onSelect, loading }) => {
+  selectedDistrict?: string;
+}> = ({ places, onSelect, loading, selectedDistrict }) => {
   if (loading) {
     return (
       <div className="p-4 space-y-3">
@@ -187,6 +191,9 @@ const KakaoMapSearchComponent: React.FC = () => {
         fetchPlaces(search, region, null, null);
       }
     }
+    const match = districts.find((d) => place.address.includes(d.id));
+    setSelectedDistrict(match?.id ?? null);
+    console.log("선택 district:", match?.id);
   };
 
   const handleRegionClick = (regionName: string) => {
@@ -226,6 +233,7 @@ const KakaoMapSearchComponent: React.FC = () => {
           onDistrictClick={handleDistrictClick}
           places={places}
           allPlaces={DUMMY_PLACES}
+          selectedDistrict={selectedDistrict ?? undefined}
         />
       );
     }
@@ -275,6 +283,7 @@ const KakaoMapSearchComponent: React.FC = () => {
             places={places}
             onSelect={handleSelect}
             loading={loading}
+            selectedDistrict={selectedDistrict}
           />
         </div>
       </div>

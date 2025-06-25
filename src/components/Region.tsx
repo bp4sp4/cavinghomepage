@@ -21,6 +21,7 @@ export type RegionMapProps = {
   onDistrictClick: (districtId: string) => void;
   places: Place[];
   allPlaces: Place[];
+  selectedDistrict?: string;
 };
 
 const REGION_MAP_COMPONENTS: Record<
