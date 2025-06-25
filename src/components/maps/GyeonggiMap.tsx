@@ -103,9 +103,9 @@ const GyeonggiMap: React.FC<GyeonggiMapProps> = ({
               id={id}
               onClick={() => onDistrictClick(id)}
               className={
-                "cursor-pointer transition-colors stroke-white stroke-1 " +
+                "cursor-pointer transition-all duration-300 stroke-white stroke-1 " +
                 (selectedDistrict === id
-                  ? "fill-blue-400"
+                  ? "fill-blue-400 stroke-blue-700 stroke-[4px] selected-district"
                   : "fill-gray-300 hover:fill-blue-400")
               }
             />
