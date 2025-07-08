@@ -124,13 +124,6 @@
 
 
 .selected-district {
-  filter: drop-shadow(0 0 8px #2563eb) drop-shadow(0 0 16px #2563eb80);
+  filter: drop-shadow(0 0 8px #2B7FFF) drop-shadow(0 0 16px #2B7FFF);
   transition: filter 0.3s;
-}
-
-path:hover {
-  filter: drop-shadow(0 2px 8px rgba(37, 99, 235, 0.2));
-  transform: translateY(-4px) scale(1.02);
-  transition: filter 0.2s, transform 0.2s;
-  z-index: 1000;
 }

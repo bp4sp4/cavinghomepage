@@ -6,7 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import KoreaMap from "@/components/KoreaMap";
+import KoreaMap, {
+  regionNameMapping,
+  regionLabelPositions,
+} from "@/components/KoreaMap";
 import REGION_MAP_COMPONENTS from "@/components/Region";
 import { DUMMY_PLACES } from "../data/dumy-places";
 import paths from "../data/gyeonggi-paths";
@@ -20,9 +23,9 @@ export interface Place {
   lng: number;
   open_hours: string;
   phone: string;
-  region: string; // ex: "경기"
-  city?: string; // ex: "성남시"
-  district?: string; // ex: "분당구"
+  region: string;
+  city?: string;
+  district?: string;
 }
 
 const districts = paths.map((p) => ({ id: p.id, d: p.d }));
@@ -196,19 +199,18 @@ const KakaoMapSearchComponent: React.FC = () => {
   };
 
   const handleRegionClick = (regionName: string) => {
-    setSelectedRegion(regionName);
-    setSelectedDistrict(null);
-    fetchPlaces(search, regionName, null, null);
+    if (regionName === "서울") {
+      setSelectedRegion(regionName);
+      setSelectedDistrict(null);
+      fetchPlaces(search, regionName, null, null);
+    } else {
+      setSelectedRegion(regionName);
+    }
   };
 
   const handleDistrictClick = (districtId: string) => {
     setSelectedDistrict(districtId);
-    const filtered = DUMMY_PLACES.filter(
-      (p: Place) =>
-        (!selectedRegion || p.region === selectedRegion) &&
-        p.district === districtId
-    );
-    setPlaces(filtered);
+    fetchPlaces(search, selectedRegion, selectedCity, districtId);
   };
 
   const getTitle = () => {
@@ -225,7 +227,7 @@ const KakaoMapSearchComponent: React.FC = () => {
   };
 
   const renderMap = () => {
-    if (selectedRegion && REGION_MAP_COMPONENTS[selectedRegion]) {
+    if (selectedRegion && selectedRegion === "서울") {
       const RegionMapComponent = REGION_MAP_COMPONENTS[selectedRegion];
       return (
         <RegionMapComponent
@@ -236,12 +238,33 @@ const KakaoMapSearchComponent: React.FC = () => {
         />
       );
     }
-    return <KoreaMap onRegionClick={handleRegionClick} places={places} />;
+
+    const position = selectedRegion
+      ? regionLabelPositions[selectedRegion]
+      : null;
+
+    return (
+      <div className="relative w-full h-full">
+        <KoreaMap
+          onRegionClick={handleRegionClick}
+          selectedRegion={selectedRegion}
+          places={places}
+        />
+        {selectedRegion && selectedRegion !== "서울" && position && (
+          <img
+            src={`/images/${regionNameMapping[selectedRegion]}.png`}
+            alt={selectedRegion}
+            className="absolute w-[93Px] h-[69px]"
+            style={{ left: `${position.x + 150}px`, top: `${position.y}px` }}
+          />
+        )}
+      </div>
+    );
   };
 
   return (
-    <div className="flex h-screen bg-background">
-      <div className="w-96 border-r border-border flex flex-col">
+    <div className="flex flex-row-reverse h-screen bg-background">
+      <div className="w-[543px] border-l border-border flex flex-col">
         <div className="p-4 border-b flex items-left gap-2 flex-col">
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <span>
