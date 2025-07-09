@@ -213,10 +213,6 @@ const KakaoMapSearchComponent: React.FC = () => {
     fetchPlaces(search, selectedRegion, selectedCity, districtId);
   };
 
-  const handleBackgroundClick = () => {
-    setSelectedRegion(null); // Deselect region
-  };
-
   const getTitle = () => {
     if (selectedDistrict) {
       return `${selectedRegion} ${selectedDistrict} 요양보호사 시설 검색`;
