@@ -213,6 +213,10 @@ const KakaoMapSearchComponent: React.FC = () => {
     fetchPlaces(search, selectedRegion, selectedCity, districtId);
   };
 
+  const handleBackgroundClick = () => {
+    setSelectedRegion(null); // Deselect region
+  };
+
   const getTitle = () => {
     if (selectedDistrict) {
       return `${selectedRegion} ${selectedDistrict} 요양보호사 시설 검색`;
@@ -224,6 +228,22 @@ const KakaoMapSearchComponent: React.FC = () => {
       return `${selectedRegion} 요양보호사 시설 검색`;
     }
     return "전국 요양원 시설 검색";
+  };
+
+  const regionImageOffsets: { [key: string]: { x: number; y: number } } = {
+    전라북도: { x: 180, y: -40 },
+    대전: { x: 140, y: -40 },
+    충청남도: { x: 190, y: -50 },
+    세종: { x: 160, y: -20 },
+    울산: { x: 175, y: -45 },
+    전라남도: { x: 185, y: -35 },
+    제주: { x: 195, y: -55 },
+    경상남도: { x: 165, y: -25 },
+    부산: { x: 170, y: -40 },
+    경기: { x: 100, y: -30 },
+    인천: { x: 190, y: -20 },
+    강원: { x: 170, y: -50 },
+    default: { x: 180, y: -40 },
   };
 
   const renderMap = () => {
@@ -255,7 +275,18 @@ const KakaoMapSearchComponent: React.FC = () => {
             src={`/images/${regionNameMapping[selectedRegion]}.png`}
             alt={selectedRegion}
             className="absolute w-[93Px] h-[69px]"
-            style={{ left: `${position.x + 150}px`, top: `${position.y}px` }}
+            style={{
+              left: `${
+                position.x +
+                (regionImageOffsets[selectedRegion]?.x ||
+                  regionImageOffsets.default.x)
+              }px`,
+              top: `${
+                position.y +
+                (regionImageOffsets[selectedRegion]?.y ||
+                  regionImageOffsets.default.y)
+              }px`,
+            }}
           />
         )}
       </div>
@@ -264,7 +295,7 @@ const KakaoMapSearchComponent: React.FC = () => {
 
   return (
     <div className="flex flex-row-reverse h-screen bg-background">
-      <div className="w-[543px] border-l border-border flex flex-col">
+      <div className="w-[543px] border-l border-border flex flex-col z-50">
         <div className="p-4 border-b flex items-left gap-2 flex-col">
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <span>
@@ -308,7 +339,7 @@ const KakaoMapSearchComponent: React.FC = () => {
           />
         </div>
       </div>
-      <main className="flex-1 flex items-center justify-center p-4 overflow-hidden">
+      <main className="flex-1 flex items-center justify-center p-4 overflow-hidden z-50">
         <div className="w-full h-full max-w-4xl max-h-4xl aspect-w-1 aspect-h-1">
           {renderMap()}
         </div>
