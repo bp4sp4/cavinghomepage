@@ -26,8 +26,6 @@ export interface Place {
   district?: string;
 }
 
-
-
 const KakaoMapSearchComponent: React.FC = () => {
   const [places, setPlaces] = useState<Place[]>([]);
   const [search, setSearch] = useState("");
@@ -56,8 +54,7 @@ const KakaoMapSearchComponent: React.FC = () => {
   const fetchPlaces = async (
     keyword = "",
     region: string | null = null,
-    city: string | null = null,
-    district: string | null = null
+    city: string | null = null
   ) => {
     setLoading(true);
     try {
@@ -94,15 +91,11 @@ const KakaoMapSearchComponent: React.FC = () => {
     fetchPlaces();
   }, []);
 
-  const handleSearch = () =>
-    fetchPlaces(search, selectedRegion, selectedCity, selectedDistrict);
+  const handleSearch = () => fetchPlaces(search, selectedRegion, selectedCity);
   const handleReset = () => {
-    if (selectedDistrict) {
-      setSelectedDistrict(null);
-      fetchPlaces(search, selectedRegion, null, null);
-    } else if (selectedCity) {
+    if (selectedCity) {
       setSelectedCity(null);
-      fetchPlaces(search, selectedRegion, null, null);
+      fetchPlaces(search, selectedRegion, null);
     } else if (selectedRegion) {
       setSelectedRegion(null);
       fetchPlaces();
@@ -114,42 +107,21 @@ const KakaoMapSearchComponent: React.FC = () => {
 
   const handleSelect = (place: Place) => {
     setSelectedRegion(place.region);
-    if (place.region === "서울") {
-      setSelectedDistrict(place.district ?? null);
-      setSelectedCity(null); // 서울은 시가 없으므로 초기화
-      fetchPlaces(search, place.region, null, place.district);
-    } else {
-      setSelectedCity(null); // 서울 외 지역은 시/구 초기화
-      setSelectedDistrict(null);
-      fetchPlaces(search, place.region, null, null);
-    }
-    console.log(
-      "선택된 장소의 지역: ",
-      place.region,
-      "구/군: ",
-      place.district
-    );
+    setSelectedCity(null); // 시/구 초기화
+    fetchPlaces(search, place.region, null);
+    console.log("선택된 장소의 지역: ", place.region);
   };
 
   const handleRegionClick = (regionName: string) => {
     if (regionName === "서울") {
       setSelectedRegion(regionName);
-      setSelectedDistrict(null);
-      fetchPlaces(search, regionName, null, null);
+      fetchPlaces(search, regionName, null);
     } else {
       setSelectedRegion(regionName);
     }
   };
 
-  const handleDistrictClick = (districtId: string) => {
-    setSelectedDistrict(districtId);
-    fetchPlaces(search, selectedRegion, selectedCity, districtId);
-  };
-
   const getTitle = () => {
-    if (selectedDistrict) {
-      return `${selectedRegion} ${selectedDistrict} 요양보호사 시설 검색`;
-    }
     if (selectedCity) {
       return `${selectedRegion} ${selectedCity} 요양보호사 시설 검색`;
     }
@@ -180,10 +152,9 @@ const KakaoMapSearchComponent: React.FC = () => {
       const RegionMapComponent = REGION_MAP_COMPONENTS[selectedRegion];
       return (
         <RegionMapComponent
-          onDistrictClick={handleDistrictClick}
           places={places}
           allPlaces={places}
-          selectedDistrict={selectedDistrict ?? undefined}
+          onDistrictClick={() => {}}
         />
       );
     }
@@ -270,9 +241,7 @@ const KakaoMapSearchComponent: React.FC = () => {
           {selectedRegion && selectedRegion === "서울" ? (
             <div className="p-4">
               <Button onClick={handleReset} className="w-full">
-                {selectedDistrict
-                  ? `${selectedRegion} 전체 맵으로`
-                  : selectedCity
+                {selectedCity
                   ? `${selectedRegion} 전체 맵으로`
                   : "전체 맵으로 돌아가기"}
               </Button>
