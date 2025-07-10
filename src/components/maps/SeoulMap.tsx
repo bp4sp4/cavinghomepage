@@ -40,7 +40,11 @@ const seoulDistricts = [
   "중랑구",
 ];
 
-const SeoulMap: React.FC<SeoulMapProps> = ({ onDistrictClick, allPlaces, selectedDistrict }) => {
+const SeoulMap: React.FC<SeoulMapProps> = ({
+  onDistrictClick,
+  allPlaces,
+  selectedDistrict,
+}) => {
   const [geoJson, setGeoJson] = useState<FeatureCollection<
     Geometry,
     GeoJsonProperties
@@ -79,6 +83,7 @@ const SeoulMap: React.FC<SeoulMapProps> = ({ onDistrictClick, allPlaces, selecte
     if (allPlaces && Array.isArray(allPlaces)) {
       allPlaces.forEach((place) => {
         const district = seoulDistricts.find((d) => place.address.includes(d));
+
         if (district) {
           counts[district] = (counts[district] || 0) + 1;
         }
@@ -124,7 +129,11 @@ const SeoulMap: React.FC<SeoulMapProps> = ({ onDistrictClick, allPlaces, selecte
             >
               <path
                 d={path}
-                className={`stroke-white ${districtName === selectedDistrict ? "fill-blue-500" : "fill-gray-200"} group-hover:fill-blue-400 transition-colors`}
+                className={`stroke-white ${
+                  districtName === selectedDistrict
+                    ? "fill-blue-500"
+                    : "fill-gray-200"
+                } group-hover:fill-blue-400 transition-colors`}
                 strokeWidth="2"
               />
               <text

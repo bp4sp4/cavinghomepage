@@ -26,25 +26,7 @@ export interface Place {
   district?: string;
 }
 
-const REGIONS = [
-  "서울",
-  "부산",
-  "대구",
-  "인천",
-  "광주",
-  "대전",
-  "울산",
-  "경기",
-  "강원",
-  "충청북도",
-  "충청남도",
-  "전라북도",
-  "전남",
-  "경북",
-  "경상남도",
-  "제주",
-  "세종",
-];
+
 
 const KakaoMapSearchComponent: React.FC = () => {
   const [places, setPlaces] = useState<Place[]>([]);
