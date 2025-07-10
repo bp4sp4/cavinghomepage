@@ -208,7 +208,7 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
       }
     });
     return counts;
-  }, [places]);
+  }, [allPlaces]);
   return (
     <div className="w-full max-w-[450px]  mx-auto  aspect-[540/968]">
       <svg
@@ -264,7 +264,7 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
             if (!pos) return null;
             const { x, y } = getLabelPosition(region, pos);
             return (
-              <g>
+              <g key={region.id}>
                 <circle
                   cx={x}
                   cy={y}
