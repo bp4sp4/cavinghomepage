@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,8 @@ export interface Place {
   phone: string;
   region: string;
   image_url?: string;
+  city?: string;
+  district?: string;
 }
 
 const REGIONS = [
@@ -52,6 +54,23 @@ const KakaoMapSearchComponent: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
 
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const [mapRenderedWidth, setMapRenderedWidth] = useState(0);
+  const [mapRenderedHeight, setMapRenderedHeight] = useState(0);
+
+  useEffect(() => {
+    const updateMapDimensions = () => {
+      if (mapContainerRef.current) {
+        setMapRenderedWidth(mapContainerRef.current.clientWidth);
+        setMapRenderedHeight(mapContainerRef.current.clientHeight);
+      }
+    };
+
+    updateMapDimensions();
+    window.addEventListener("resize", updateMapDimensions);
+    return () => window.removeEventListener("resize", updateMapDimensions);
+  }, []);
+
   const fetchPlaces = async (
     keyword = "",
     region: string | null = null,
@@ -68,9 +87,7 @@ const KakaoMapSearchComponent: React.FC = () => {
       if (city) {
         query = query.eq("city", city);
       }
-      if (district) {
-        query = query.eq("district", district);
-      }
+
       if (keyword) {
         query = query.or(`name.ilike.%${keyword}%,address.ilike.%${keyword}%`);
       }
@@ -114,15 +131,22 @@ const KakaoMapSearchComponent: React.FC = () => {
   };
 
   const handleSelect = (place: Place) => {
-    if (!selectedRegion) {
-      const region = REGIONS.find((r) => place.address.includes(r));
-      if (region) {
-        setSelectedRegion(region);
-        fetchPlaces(search, region, null, null);
-      }
+    setSelectedRegion(place.region);
+    if (place.region === "서울") {
+      setSelectedDistrict(place.district ?? null);
+      setSelectedCity(null); // 서울은 시가 없으므로 초기화
+      fetchPlaces(search, place.region, null, place.district);
+    } else {
+      setSelectedCity(null); // 서울 외 지역은 시/구 초기화
+      setSelectedDistrict(null);
+      fetchPlaces(search, place.region, null, null);
     }
-    setSelectedDistrict(place.address ?? null);
-    console.log("선택 district:", place.address);
+    console.log(
+      "선택된 장소의 지역: ",
+      place.region,
+      "구/군: ",
+      place.district
+    );
   };
 
   const handleRegionClick = (regionName: string) => {
@@ -163,9 +187,9 @@ const KakaoMapSearchComponent: React.FC = () => {
     제주: { x: 195, y: -55 },
     경상남도: { x: 165, y: -25 },
     부산: { x: 170, y: -40 },
-    경기: { x: 100, y: -30 },
+    경기: { x: 100, y: -120 },
     인천: { x: 190, y: -20 },
-    강원: { x: 170, y: -50 },
+    강원: { x: 100, y: -120 },
     default: { x: 180, y: -40 },
   };
 
@@ -186,6 +210,25 @@ const KakaoMapSearchComponent: React.FC = () => {
       ? regionLabelPositions[selectedRegion]
       : null;
 
+    // Calculate actual rendered SVG dimensions and offsets
+    const svgAspectRatio = 800 / 800; // KoreaMap SVG viewBox is 800x800
+    let renderedSvgWidth = mapRenderedWidth;
+    let renderedSvgHeight = mapRenderedHeight;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    const containerAspectRatio = mapRenderedWidth / mapRenderedHeight;
+
+    if (containerAspectRatio > svgAspectRatio) {
+      // Container is wider, SVG height is constrained
+      renderedSvgWidth = mapRenderedHeight * svgAspectRatio;
+      offsetX = (mapRenderedWidth - renderedSvgWidth) / 2;
+    } else {
+      // Container is taller, SVG width is constrained
+      renderedSvgHeight = mapRenderedWidth / svgAspectRatio;
+      offsetY = (mapRenderedHeight - renderedSvgHeight) / 2;
+    }
+
     return (
       <div className="relative w-full h-full">
         <KoreaMap
@@ -197,18 +240,24 @@ const KakaoMapSearchComponent: React.FC = () => {
           <img
             src={`/images/${regionNameMapping[selectedRegion]}.png`}
             alt={selectedRegion}
-            className="absolute w-[93Px] h-[69px]"
+            className="absolute"
             style={{
               left: `${
-                position.x +
-                (regionImageOffsets[selectedRegion]?.x ||
-                  regionImageOffsets.default.x)
+                offsetX + // Offset of SVG within container
+                (position.x +
+                  (regionImageOffsets[selectedRegion]?.x ||
+                    regionImageOffsets.default.x)) *
+                  (renderedSvgWidth / 800)
               }px`,
               top: `${
-                position.y +
-                (regionImageOffsets[selectedRegion]?.y ||
-                  regionImageOffsets.default.y)
+                offsetY + // Offset of SVG within container
+                (position.y +
+                  (regionImageOffsets[selectedRegion]?.y ||
+                    regionImageOffsets.default.y)) *
+                  (renderedSvgHeight / 800)
               }px`,
+              width: `${93 * (renderedSvgWidth / 800)}px`,
+              height: `${69 * (renderedSvgHeight / 800)}px`,
             }}
           />
         )}
@@ -218,7 +267,7 @@ const KakaoMapSearchComponent: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <header className="w-full  flex justify-center items-center">
+      <header className="w-full P-4 flex justify-center items-center">
         <img
           src="/images/mainBanner.png"
           alt="Banner"
@@ -236,7 +285,7 @@ const KakaoMapSearchComponent: React.FC = () => {
             </h1>
             <p className="text-sm text-muted-foreground">{getTitle()}</p>
           </div>
-          {selectedRegion ? (
+          {selectedRegion && selectedRegion === "서울" ? (
             <div className="p-4">
               <Button onClick={handleReset} className="w-full">
                 {selectedDistrict
@@ -285,7 +334,10 @@ const KakaoMapSearchComponent: React.FC = () => {
             )}
           </div>
         </div>
-        <main className="flex-1 flex items-center justify-center p-4 overflow-hidden relative">
+        <main
+          ref={mapContainerRef}
+          className="flex-1 flex items-center justify-center p-4 overflow-hidden relative"
+        >
           {renderMap()}
         </main>
       </div>
