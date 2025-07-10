@@ -7,7 +7,6 @@ interface KoreaMapProps {
   places: Place[];
 }
 
-// SVG <g id="features">의 path 데이터를 그대로 반영
 const regions = [
   {
     id: "KR42",
@@ -164,7 +163,7 @@ function getLabelPosition(
 }
 
 const gradientMap: { [key: string]: string } = {
-  KR42: "paint0_linear_381_1045", // 강원
+  KR42: "paint16_linear_381_1045", // 강원
   KR41: "paint2_linear_381_1045", // 경기
   KR44: "paint2_linear_381_1045", // 충청남도
   KR28: "paint3_linear_381_1045", // 인천
@@ -209,12 +208,10 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
     return counts;
   }, [places]);
   return (
-    <div className="w-full flex items-center justify-center">
+    <div className="w-full max-w-[450px]  mx-auto  aspect-[540/968]">
       <svg
-        viewBox="0 0 540 1008"
-        width="540"
-        height="968"
-        className="w-full"
+        viewBox="0 0 540 968"
+        className="w-full h-auto"
         stroke="#ffffff"
         opacity={0.5}
         strokeWidth={0.5}
@@ -237,8 +234,23 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
                   ? "opacity-30 hover:stroke-red-300 hover:stroke-2 hover:drop-shadow-md"
                   : "opacity-50 hover:stroke-red-300 hover:stroke-2 hover:drop-shadow-md"
               }`}
-              onClick={() => onRegionClick(region.name)}
-              transform={region.id === "KR49" ? "translate(0, -20)" : ""}
+              onClick={() => {
+                const pathData = region.path;
+                const match = pathData.match(/M\s*([\d.-]+)\s*([\d.-]+)/);
+                if (match && match.length >= 3) {
+                  const x = parseFloat(match[1]);
+                  const y = parseFloat(match[2]);
+                  console.log(
+                    `Clicked region: ${region.name} (ID: ${region.id}) at approximate location (X: ${x}, Y: ${y})`
+                  );
+                } else {
+                  console.log(
+                    `Clicked region: ${region.name} (ID: ${region.id}) - Location data not found.`
+                  );
+                }
+                onRegionClick(region.name);
+              }}
+              transform={region.id === "KR49" ? "translate(0, -100)" : ""}
             />
           ))}
         </g>
@@ -310,10 +322,10 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
           </linearGradient>
           <linearGradient
             id="paint2_linear_381_1045"
-            x1="97.06"
-            y1="218.592"
-            x2="-7.3036"
-            y2="328.067"
+            x1="57.06"
+            y1="558.592"
+            x2="27.3036"
+            y2="728.067"
             gradientUnits="userSpaceOnUse"
           >
             <stop stopColor="#2B7FFF" />
@@ -322,7 +334,7 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
           </linearGradient>
           <linearGradient
             id="paint3_linear_381_1045"
-            x1="71"
+            x1="171"
             y1="532"
             x2="117.423"
             y2="657.55"
@@ -333,10 +345,10 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
           </linearGradient>
           <linearGradient
             id="paint4_linear_381_1045"
-            x1="56"
-            y1="658.5"
-            x2="163.095"
-            y2="845.145"
+            x1="156"
+            y1="-258.5"
+            x2="363.095"
+            y2="445.145"
             gradientUnits="userSpaceOnUse"
           >
             <stop stopColor="#D3E4FF" />
@@ -385,7 +397,7 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
             y2="609.176"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#D0E2FD" />
+            <stop offset="0.337065" stopColor="#88B7FF" />
             <stop offset="0.740808" stopColor="#E4EFFF" />
           </linearGradient>
           <linearGradient
@@ -462,9 +474,9 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
           </linearGradient>
           <linearGradient
             id="paint15_linear_381_1045"
-            x1="278.437"
+            x1="578.437"
             y1="518.626"
-            x2="373.483"
+            x2="273.483"
             y2="595.61"
             gradientUnits="userSpaceOnUse"
           >
@@ -474,13 +486,13 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
           </linearGradient>
           <linearGradient
             id="paint16_linear_381_1045"
-            x1="165"
-            y1="84"
-            x2="553.385"
-            y2="287.781"
+            x1="120.9562"
+            y1="130.781"
+            x2="171.1242"
+            y2="880.14"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#D9E8FF" />
+            <stop offset="0.337065" stopColor="#88B7FF" />
             <stop offset="0.674129" stopColor="#E4EFFF" />
           </linearGradient>
           <linearGradient
@@ -491,9 +503,9 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
             y2="1"
             gradientUnits="objectBoundingBox"
           >
-            <stop stopColor="#60A5FA" /> {/* Light blue */}
-            <stop offset="0.5" stopColor="#3B82F6" /> {/* Medium blue */}
-            <stop offset="1" stopColor="#2563EB" /> {/* Dark blue */}
+            <stop stopColor="#60A5FA" />
+            <stop offset="0.5" stopColor="#3B82F6" />
+            <stop offset="1" stopColor="#2563EB" />
           </linearGradient>
         </defs>
       </svg>

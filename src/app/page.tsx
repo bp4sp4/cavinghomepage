@@ -1,92 +1,28 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MapPin, Clock, Phone } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+
 import { Skeleton } from "@/components/ui/skeleton";
+import HospitalCard from "@/components/HospitalCard";
 import KoreaMap, {
   regionNameMapping,
   regionLabelPositions,
 } from "@/components/KoreaMap";
 import REGION_MAP_COMPONENTS from "@/components/Region";
-import { DUMMY_PLACES } from "../data/dumy-places";
-import paths from "../data/gyeonggi-paths";
+import { supabase } from "@/lib/supabaseClient";
 
 export interface Place {
   id: number;
   name: string;
   address: string;
-  category: string;
-  lat: number;
-  lng: number;
   open_hours: string;
   phone: string;
   region: string;
-  city?: string;
-  district?: string;
+  image_url?: string;
 }
-
-const districts = paths.map((p) => ({ id: p.id, d: p.d }));
-
-const PlaceList: React.FC<{
-  places: Place[];
-  onSelect: (place: Place) => void;
-  loading: boolean;
-}> = ({ places, onSelect, loading }) => {
-  if (loading) {
-    return (
-      <div className="p-4 space-y-3">
-        {[...Array(5)].map((_, i) => (
-          <Skeleton key={i} className="h-20 w-full rounded-lg" />
-        ))}
-      </div>
-    );
-  }
-
-  if (!places || places.length === 0) {
-    return <div className="p-6">장소 데이터가 없습니다.</div>;
-  }
-
-  return (
-    <div className="p-4 space-y-3">
-      <p className="text-sm text-muted-foreground mb-4">
-        {places.length}개의 장소
-      </p>
-      {places.map((place) => (
-        <Card
-          key={place.id}
-          className="p-4 cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => onSelect(place)}
-        >
-          <div className="space-y-2">
-            <div className="flex items-start justify-between">
-              <h3 className="font-medium text-foreground">{place.name}</h3>
-              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                {place.category}
-              </span>
-            </div>
-            <p className="text-sm text-muted-foreground flex items-center gap-1">
-              <MapPin className="w-3 h-3" />
-              {place.address}
-            </p>
-            <div className="space-y-1">
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Clock className="w-3 h-3" />
-                <span>{place.open_hours}</span>
-              </div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Phone className="w-3 h-3" />
-                <span>{place.phone}</span>
-              </div>
-            </div>
-          </div>
-        </Card>
-      ))}
-    </div>
-  );
-};
 
 const REGIONS = [
   "서울",
@@ -116,51 +52,43 @@ const KakaoMapSearchComponent: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
 
-  // 일반화된 필터 함수
-  const filterPlaces = (
-    places: Place[],
-    {
-      region,
-      city,
-      district,
-      keyword,
-    }: { region?: string; city?: string; district?: string; keyword?: string }
-  ) => {
-    return places.filter((p) => {
-      if (region && p.region !== region) return false;
-      if (city && p.city !== city) return false;
-      if (district && p.district !== district) return false;
-      if (keyword) {
-        const lower = keyword.toLowerCase();
-        if (
-          !p.name.toLowerCase().includes(lower) &&
-          !p.address.toLowerCase().includes(lower)
-        ) {
-          return false;
-        }
-      }
-      return true;
-    });
-  };
-
-  // fetchPlaces 함수 리팩토링
-  const fetchPlaces = (
+  const fetchPlaces = async (
     keyword = "",
     region: string | null = null,
     city: string | null = null,
     district: string | null = null
   ) => {
     setLoading(true);
-    setTimeout(() => {
-      const filtered = filterPlaces(DUMMY_PLACES, {
-        region: region ?? undefined,
-        city: city ?? undefined,
-        district: district ?? undefined,
-        keyword,
-      });
-      setPlaces(filtered);
+    try {
+      let query = supabase.from("places").select("*");
+
+      if (region) {
+        query = query.eq("region", region);
+      }
+      if (city) {
+        query = query.eq("city", city);
+      }
+      if (district) {
+        query = query.eq("district", district);
+      }
+      if (keyword) {
+        query = query.or(`name.ilike.%${keyword}%,address.ilike.%${keyword}%`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Supabase query error:", error);
+        throw error;
+      }
+
+      console.log("Fetched data:", data);
+      setPlaces(data || []);
+    } catch (error) {
+      console.error("Error fetching places:", error);
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   useEffect(() => {
@@ -193,9 +121,8 @@ const KakaoMapSearchComponent: React.FC = () => {
         fetchPlaces(search, region, null, null);
       }
     }
-    const match = districts.find((d) => place.address.includes(d.id));
-    setSelectedDistrict(match?.id ?? null);
-    console.log("선택 district:", match?.id);
+    setSelectedDistrict(place.address ?? null);
+    console.log("선택 district:", place.address);
   };
 
   const handleRegionClick = (regionName: string) => {
@@ -249,7 +176,7 @@ const KakaoMapSearchComponent: React.FC = () => {
         <RegionMapComponent
           onDistrictClick={handleDistrictClick}
           places={places}
-          allPlaces={DUMMY_PLACES}
+          allPlaces={places}
           selectedDistrict={selectedDistrict ?? undefined}
         />
       );
@@ -290,56 +217,74 @@ const KakaoMapSearchComponent: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-row-reverse h-screen bg-background">
-      <div className="w-[543px] border-l border-border flex flex-col z-50">
-        <div className="p-4 border-b flex items-left gap-2 flex-col">
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <span>
-              <img src="/logo2.png" alt="logo" className="w-7 h-7" />
-            </span>
-            한평생 돌봄지도
-          </h1>
-          <p className="text-sm text-muted-foreground">{getTitle()}</p>
-        </div>
-        {selectedRegion ? (
-          <div className="p-4">
-            <Button onClick={handleReset} className="w-full">
-              {selectedDistrict
-                ? `${selectedRegion} 전체 맵으로`
-                : selectedCity
-                ? `${selectedRegion} 전체 맵으로`
-                : "전체 맵으로 돌아가기"}
-            </Button>
+    <div className="flex flex-col h-screen bg-background">
+      <header className="w-full bg-gray-200 p-4 flex justify-center items-center">
+        <img src="/logo2.png" alt="Banner" className="h-16 object-contain" />
+      </header>
+      <div className="flex flex-row-reverse flex-1 overflow-hidden">
+        <div className="w-[543px] border-l border-border flex flex-col z-50">
+          <div className="p-4 border-b flex items-left gap-2 flex-col">
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <span>
+                <img src="/logo2.png" alt="logo" className="w-7 h-7" />
+              </span>
+              한평생 돌봄지도
+            </h1>
+            <p className="text-sm text-muted-foreground">{getTitle()}</p>
           </div>
-        ) : (
-          <div className="p-4">
-            <div className="flex gap-2">
-              <Input
-                placeholder="시설명 또는 지역 검색..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              />
-              <Button onClick={handleSearch}>검색</Button>
-              <Button onClick={handleReset} variant="outline">
-                리셋
+          {selectedRegion ? (
+            <div className="p-4">
+              <Button onClick={handleReset} className="w-full">
+                {selectedDistrict
+                  ? `${selectedRegion} 전체 맵으로`
+                  : selectedCity
+                  ? `${selectedRegion} 전체 맵으로`
+                  : "전체 맵으로 돌아가기"}
               </Button>
             </div>
+          ) : (
+            <div className="p-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="시설명 또는 지역 검색..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                />
+                <Button onClick={handleSearch}>검색</Button>
+                <Button onClick={handleReset} variant="outline">
+                  리셋
+                </Button>
+              </div>
+            </div>
+          )}
+          <div className="flex-1 overflow-y-auto">
+            {loading ? (
+              <div className="p-4 space-y-3">
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={i} className="h-20 w-full rounded-lg" />
+                ))}
+              </div>
+            ) : places && places.length > 0 ? (
+              <div className="p-4 space-y-3">
+                <p className="text-sm text-muted-foreground mb-4">
+                  {places.length}개의 장소
+                </p>
+                {places.map((place) => (
+                  <div key={place.id} onClick={() => handleSelect(place)}>
+                    <HospitalCard place={place} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6">장소 데이터가 없습니다.</div>
+            )}
           </div>
-        )}
-        <div className="flex-1 overflow-y-auto">
-          <PlaceList
-            places={places}
-            onSelect={handleSelect}
-            loading={loading}
-          />
         </div>
-      </div>
-      <main className="flex-1 flex items-center justify-center p-4 overflow-hidden z-50">
-        <div className="w-full h-full max-w-4xl max-h-4xl aspect-w-1 aspect-h-1">
+        <main className="flex-1 flex items-center justify-center p-4 overflow-hidden relative">
           {renderMap()}
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };

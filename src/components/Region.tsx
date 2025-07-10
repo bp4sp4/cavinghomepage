@@ -1,6 +1,6 @@
 import SeoulMap from "./maps/SeoulMap";
 
-import type { Place } from "../data/dumy-places";
+import type { Place } from "@/app/page";
 
 export type RegionMapProps = {
   onDistrictClick: (districtId: string) => void;
