@@ -4,7 +4,6 @@ import { Place } from "@/app/page";
 interface KoreaMapProps {
   onRegionClick: (regionName: string) => void;
   selectedRegion: string | null;
-  places: Place[];
   allPlaces: Place[];
 }
 
@@ -193,7 +192,6 @@ function getRegionGradient(regionId: string, isSelected: boolean): string {
 const KoreaMap: React.FC<KoreaMapProps> = ({
   onRegionClick,
   selectedRegion,
-  places,
   allPlaces,
 }) => {
   const placeCounts = useMemo(() => {
