@@ -26,10 +26,12 @@ export interface Place {
 
 const KakaoMapSearchComponent: React.FC = () => {
   const [places, setPlaces] = useState<Place[]>([]);
+  const [allFetchedPlaces, setAllFetchedPlaces] = useState<Place[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapRenderedWidth, setMapRenderedWidth] = useState(0);
@@ -51,7 +53,8 @@ const KakaoMapSearchComponent: React.FC = () => {
   const fetchPlaces = async (
     keyword = "",
     region: string | null = null,
-    city: string | null = null
+    city: string | null = null,
+    district: string | null = null
   ) => {
     setLoading(true);
     try {
@@ -62,6 +65,9 @@ const KakaoMapSearchComponent: React.FC = () => {
       }
       if (city) {
         query = query.eq("city", city);
+      }
+      if (district) {
+        query = query.eq("district", district);
       }
 
       if (keyword) {
@@ -77,6 +83,9 @@ const KakaoMapSearchComponent: React.FC = () => {
 
       console.log("Fetched data:", data);
       setPlaces(data || []);
+      if (!region && !city && !district) {
+        setAllFetchedPlaces(data || []);
+      }
     } catch (error) {
       console.error("Error fetching places:", error);
     } finally {
@@ -88,11 +97,14 @@ const KakaoMapSearchComponent: React.FC = () => {
     fetchPlaces();
   }, []);
 
-  const handleSearch = () => fetchPlaces(search, selectedRegion, selectedCity);
+  const handleSearch = () => fetchPlaces(search, selectedRegion, selectedCity, selectedDistrict);
   const handleReset = () => {
-    if (selectedCity) {
+    if (selectedDistrict) {
+      setSelectedDistrict(null);
+      fetchPlaces(search, selectedRegion, selectedCity, null);
+    } else if (selectedCity) {
       setSelectedCity(null);
-      fetchPlaces(search, selectedRegion, null);
+      fetchPlaces(search, selectedRegion, null, null);
     } else if (selectedRegion) {
       setSelectedRegion(null);
       fetchPlaces();
@@ -104,21 +116,23 @@ const KakaoMapSearchComponent: React.FC = () => {
 
   const handleSelect = (place: Place) => {
     setSelectedRegion(place.region);
-    setSelectedCity(null); // 시/구 초기화
-    fetchPlaces(search, place.region, null);
-    console.log("선택된 장소의 지역: ", place.region);
+    setSelectedCity(place.city ?? null);
+    setSelectedDistrict(place.district ?? null);
+    fetchPlaces(search, place.region, place.city ?? null, place.district ?? null);
+    console.log("선택된 장소의 지역: ", place.region, place.city, place.district);
   };
 
   const handleRegionClick = (regionName: string) => {
-    if (regionName === "서울") {
-      setSelectedRegion(regionName);
-      fetchPlaces(search, regionName, null);
-    } else {
-      setSelectedRegion(regionName);
-    }
+    setSelectedRegion(regionName);
+    setSelectedCity(null);
+    setSelectedDistrict(null);
+    fetchPlaces(search, regionName, null, null);
   };
 
   const getTitle = () => {
+    if (selectedDistrict) {
+      return `${selectedRegion} ${selectedCity ? selectedCity + ' ' : ''}${selectedDistrict} 요양보호사 시설 검색`;
+    }
     if (selectedCity) {
       return `${selectedRegion} ${selectedCity} 요양보호사 시설 검색`;
     }
@@ -151,6 +165,7 @@ const KakaoMapSearchComponent: React.FC = () => {
       const RegionMapComponent = REGION_MAP_COMPONENTS[selectedRegion];
       return (
         <RegionMapComponent
+          selectedDistrict={selectedDistrict ?? undefined}
           places={places}
           allPlaces={places}
           onDistrictClick={() => {}}
@@ -187,6 +202,7 @@ const KakaoMapSearchComponent: React.FC = () => {
           onRegionClick={handleRegionClick}
           selectedRegion={selectedRegion}
           places={places}
+          allPlaces={allFetchedPlaces}
         />
         {selectedRegion && selectedRegion !== "서울" && position && (
           <img

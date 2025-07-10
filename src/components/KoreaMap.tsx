@@ -5,6 +5,7 @@ interface KoreaMapProps {
   onRegionClick: (regionName: string) => void;
   selectedRegion: string | null;
   places: Place[];
+  allPlaces: Place[];
 }
 
 const regions = [
@@ -193,11 +194,12 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
   onRegionClick,
   selectedRegion,
   places,
+  allPlaces,
 }) => {
   const placeCounts = useMemo(() => {
     const counts: { [key: string]: number } = {};
     regions.forEach((r) => (counts[r.name] = 0));
-    places.forEach((place) => {
+    allPlaces.forEach((place) => {
       const regionName = Object.keys(regionNameMapping).find((name) =>
         place.address.includes(name)
       );
@@ -262,37 +264,30 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
             if (!pos) return null;
             const { x, y } = getLabelPosition(region, pos);
             return (
-              <React.Fragment key={region.id}>
+              <g>
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={20} // Adjust radius as needed
+                  fill="#2B7FFF"
+                  stroke="#FFFFFF"
+                  strokeWidth={1}
+                  pointerEvents="none"
+                />
                 <text
                   x={x}
-                  y={y}
+                  y={y + 1}
                   textAnchor="middle"
                   alignmentBaseline="middle"
-                  fontSize={18}
+                  fontSize={16}
                   fontWeight={900}
-                  fill="#222"
-                  stroke="#fff"
-                  strokeWidth={4}
-                  paintOrder="stroke"
+                  fill="#FFFFFF"
                   pointerEvents="none"
                   style={{ userSelect: "none" }}
                 >
-                  {`(${count})`}
+                  {count}
                 </text>
-                <text
-                  x={x}
-                  y={y}
-                  textAnchor="middle"
-                  alignmentBaseline="middle"
-                  fontSize={18}
-                  fontWeight={900}
-                  fill="#222"
-                  pointerEvents="none"
-                  style={{ userSelect: "none" }}
-                >
-                  {`(${count})`}
-                </text>
-              </React.Fragment>
+              </g>
             );
           })}
         </g>
