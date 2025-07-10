@@ -218,8 +218,12 @@ const KakaoMapSearchComponent: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <header className="w-full bg-gray-200 p-4 flex justify-center items-center">
-        <img src="/logo2.png" alt="Banner" className="h-16 object-contain" />
+      <header className="w-full  flex justify-center items-center">
+        <img
+          src="/images/mainBanner.png"
+          alt="Banner"
+          className="h-16 object-cover w-full"
+        />
       </header>
       <div className="flex flex-row-reverse flex-1 overflow-hidden">
         <div className="w-[543px] border-l border-border flex flex-col z-50">
