@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 import { Skeleton } from "@/components/ui/skeleton";
 import HospitalCard from "@/components/HospitalCard";
 import KoreaMap, {
@@ -32,7 +30,6 @@ const KakaoMapSearchComponent: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapRenderedWidth, setMapRenderedWidth] = useState(0);
