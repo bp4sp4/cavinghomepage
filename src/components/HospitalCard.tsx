@@ -1,4 +1,5 @@
 import React from "react";
+import { useToast } from "../components/ToastProvider";
 
 export type Place = {
   id: number;
@@ -15,15 +16,22 @@ interface HospitalCardProps {
 }
 
 const HospitalCard: React.FC<HospitalCardProps> = ({ place }) => {
+  const { addToast } = useToast();
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(place.address);
+    addToast("주소가 복사되었습니다!", "success");
+  };
+
   return (
-    <div className="flex items-center bg-white rounded-2xl shadow-md p-5 gap-4 max-w-xl cursor-pointer">
+    <div className="flex items-center bg-white rounded-2xl shadow-md p-5 gap-4 max-w-xl cursor-pointer relative">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-bold">{place.name}</h2>
           {/* 복사 버튼 */}
           <button
             className="ml-1 text-gray-400 hover:text-gray-600"
-            onClick={() => navigator.clipboard.writeText(place.address)}
+            onClick={handleCopy}
             title="주소 복사"
             type="button"
           >
@@ -66,9 +74,18 @@ const HospitalCard: React.FC<HospitalCardProps> = ({ place }) => {
                 viewBox="0 0 20 20"
               >
                 <path
-                  d="M6 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H6zm0 0v16"
+                  d="M17.4 15.6c-1.1 1.1-2.5 1.9-4.1 2.2-1.6.3-3.3.2-4.9-.3-1.6-.5-3.1-1.4-4.3-2.6-1.2-1.2-2.1-2.7-2.6-4.3-.5-1.6-.6-3.3-.3-4.9.3-1.6 1.1-3 2.2-4.1 1.1-1.1 2.5-1.9 4.1-2.2 1.6-.3 3.3-.2 4.9.3 1.6.5 3.1 1.4 4.3 2.6 1.2 1.2 2.1 2.7 2.6 4.3.5 1.6.6 3.3.3 4.9-.3 1.6-1.1 3-2.2 4.1z"
                   stroke="currentColor"
                   strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M13.5 10.5c-.5-.5-1.2-.8-2-.8s-1.5.3-2 .8c-.5.5-.8 1.2-.8 2s.3 1.5.8 2c.5.5 1.2.8 2 .8s1.5-.3 2-.8c.5-.5.8-1.2.8-2s-.3-1.5-.8-2z"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
               문의하기

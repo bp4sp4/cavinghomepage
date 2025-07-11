@@ -258,14 +258,19 @@ const KakaoMapSearchComponent: React.FC = () => {
       </header>
       <div className="flex flex-row-reverse flex-1 overflow-hidden">
         <div className="w-[543px] border-l border-border flex flex-col z-50">
-          <div className="p-4 border-b flex items-left gap-2 flex-col">
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <span>
-                <img src="/logo2.png" alt="logo" className="w-7 h-7" />
-              </span>
+          <div
+            className="p-4 border-b flex items-left gap-2 flex-col"
+            style={{
+              backgroundImage: "url('/images/main__banner.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }}
+          >
+            <h1 className="text-2xl font-bold flex text-white items-center gap-2">
               한평생 돌봄지도
             </h1>
-            <p className="text-sm text-muted-foreground">{getTitle()}</p>
+            <p className="text-[20px] text-white">{getTitle()}</p>
           </div>
           {selectedRegion && selectedRegion === "서울" ? (
             <div className="p-4">
@@ -301,7 +306,7 @@ const KakaoMapSearchComponent: React.FC = () => {
             ) : places && places.length > 0 ? (
               <div className="p-4 space-y-3">
                 <hr />
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-muted-foreground  mb-4">
                   {places.length}개의 장소
                 </p>
                 {places.map((place) => (
