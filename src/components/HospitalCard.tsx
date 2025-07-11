@@ -16,7 +16,7 @@ interface HospitalCardProps {
 
 const HospitalCard: React.FC<HospitalCardProps> = ({ place }) => {
   return (
-    <div className="flex items-center bg-white rounded-2xl shadow-md p-5 gap-4 max-w-xl">
+    <div className="flex items-center bg-white rounded-2xl shadow-md p-5 gap-4 max-w-xl cursor-pointer">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-bold">{place.name}</h2>

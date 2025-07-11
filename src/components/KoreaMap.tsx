@@ -446,10 +446,10 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
           </linearGradient>
           <linearGradient
             id="paint15_linear_381_1045"
-            x1="178.437"
-            y1="618.626"
-            x2="273.483"
-            y2="595.61"
+            x1="78.437"
+            y1="518.626"
+            x2="473.483"
+            y2="695.61"
             gradientUnits="userSpaceOnUse"
           >
             <stop stopColor="#2B7FFF" />
