@@ -128,7 +128,7 @@ export const regionLabelPositions: { [key: string]: { x: number; y: number } } =
     세종: { x: 159, y: 414.9 },
     전라북도: { x: 161.3, y: 571.1 },
     전라남도: { x: 128.4, y: 705.8 },
-    광주: { x: 128.3, y: 660.7 },
+    광주: { x: 128.3, y: 620.7 },
     경상북도: { x: 381.8, y: 443.4 },
     대구: { x: 390.1, y: 529.1 },
     부산: { x: 450.3, y: 668.2 },
@@ -446,8 +446,8 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
           </linearGradient>
           <linearGradient
             id="paint15_linear_381_1045"
-            x1="578.437"
-            y1="518.626"
+            x1="178.437"
+            y1="618.626"
             x2="273.483"
             y2="595.61"
             gradientUnits="userSpaceOnUse"

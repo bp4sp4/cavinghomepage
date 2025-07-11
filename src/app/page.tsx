@@ -171,6 +171,8 @@ const KakaoMapSearchComponent: React.FC = () => {
     경상북도: { x: 70, y: -170 },
     대구: { x: 47, y: -195 },
     제주: { x: 130, y: -280 },
+    광주: { x: 100, y: -150 }, // 광주 지역 이미지 오프셋 추가
+    default: { x: 0, y: 0 }, // 기본 오프셋 추가 (정의되지 않은 지역에 대비)
   };
 
   const renderMap = () => {
