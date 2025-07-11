@@ -97,7 +97,8 @@ const KakaoMapSearchComponent: React.FC = () => {
     fetchPlaces();
   }, []);
 
-  const handleSearch = () => fetchPlaces(search, selectedRegion, selectedCity, selectedDistrict);
+  const handleSearch = () =>
+    fetchPlaces(search, selectedRegion, selectedCity, selectedDistrict);
   const handleReset = () => {
     if (selectedDistrict) {
       setSelectedDistrict(null);
@@ -118,8 +119,18 @@ const KakaoMapSearchComponent: React.FC = () => {
     setSelectedRegion(place.region);
     setSelectedCity(place.city ?? null);
     setSelectedDistrict(place.district ?? null);
-    fetchPlaces(search, place.region, place.city ?? null, place.district ?? null);
-    console.log("선택된 장소의 지역: ", place.region, place.city, place.district);
+    fetchPlaces(
+      search,
+      place.region,
+      place.city ?? null,
+      place.district ?? null
+    );
+    console.log(
+      "선택된 장소의 지역: ",
+      place.region,
+      place.city,
+      place.district
+    );
   };
 
   const handleRegionClick = (regionName: string) => {
@@ -131,7 +142,9 @@ const KakaoMapSearchComponent: React.FC = () => {
 
   const getTitle = () => {
     if (selectedDistrict) {
-      return `${selectedRegion} ${selectedCity ? selectedCity + ' ' : ''}${selectedDistrict} 요양보호사 시설 검색`;
+      return `${selectedRegion} ${
+        selectedCity ? selectedCity + " " : ""
+      }${selectedDistrict} 요양보호사 시설 검색`;
     }
     if (selectedCity) {
       return `${selectedRegion} ${selectedCity} 요양보호사 시설 검색`;
@@ -139,7 +152,7 @@ const KakaoMapSearchComponent: React.FC = () => {
     if (selectedRegion) {
       return `${selectedRegion} 요양보호사 시설 검색`;
     }
-    return "전국 요양원 시설 검색";
+    return "내 주변 지역 제휴 요양원을 찾아보세요!";
   };
 
   const regionImageOffsets: { [key: string]: { x: number; y: number } } = {
@@ -210,7 +223,7 @@ const KakaoMapSearchComponent: React.FC = () => {
             className="absolute"
             style={{
               left: `${
-                offsetX + // Offset of SVG within container
+                offsetX +
                 (position.x +
                   (regionImageOffsets[selectedRegion]?.x ||
                     regionImageOffsets.default.x)) *
@@ -285,6 +298,7 @@ const KakaoMapSearchComponent: React.FC = () => {
               </div>
             ) : places && places.length > 0 ? (
               <div className="p-4 space-y-3">
+                <hr />
                 <p className="text-sm text-muted-foreground mb-4">
                   {places.length}개의 장소
                 </p>
