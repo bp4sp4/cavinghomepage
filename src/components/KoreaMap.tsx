@@ -199,6 +199,21 @@ function getRegionGradient(regionId: string, isSelected: boolean): string {
   return `url(#${gradientMap[regionId]})`;
 }
 
+function getRegionTransform(regionId: string, isSelected: boolean): string {
+  if (isSelected) {
+    if (regionId === "KR49") { // 제주도
+      return "scale(1.05) translate(10, -50)"; // 제주도 선택 시: 확대 및 오른쪽 위로 이동
+    } else if (regionId === "KR42") { // 강원도
+      return "scale(1.05) translate(0, 10)"; // 강원도 선택 시: 확대 및 아래로 이동 (값 조정 가능)
+    }
+  }
+  // 선택되지 않은 제주도 또는 강원도, 그리고 다른 모든 지역에 대한 기본 transform
+  if (regionId === "KR49" && !isSelected) {
+    return "translate(0, 0)"; // 제주도 기본 위치
+  }
+  return ""; // 그 외의 경우 transform 없음 (className에서 처리)
+}
+
 const KoreaMap: React.FC<KoreaMapProps> = ({
   onRegionClick,
   selectedRegion,
@@ -238,9 +253,11 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
                 selectedRegion === region.name
               )}
               filter="url(#inner-shadow)"
-              className={`cursor-pointer transition-all duration-300 ease-in-out transform origin-center ${
+              className={`cursor-pointer transition-all duration-300 ease-in-out ${
                 selectedRegion === region.name
-                  ? "stroke-blue-900 stroke-[4] scale-105 drop-shadow-lg"
+                  ? region.id === "KR49" || region.id === "KR42"
+                    ? "stroke-blue-900 stroke-[4] drop-shadow-lg" // 제주도 또는 강원도 선택 시
+                    : "stroke-blue-900 stroke-[4] scale-105 drop-shadow-lg transform origin-center" // 다른 지역 선택 시
                   : selectedRegion
                   ? "opacity-30 hover:stroke-red-300 hover:stroke-[4] hover:drop-shadow-md"
                   : "opacity-50 hover:stroke-red-300 hover:stroke-[4] hover:drop-shadow-md"
@@ -261,7 +278,10 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
                 }
                 onRegionClick(region.name);
               }}
-              transform={region.id === "KR49" ? "translate(0, -100)" : ""}
+              transform={getRegionTransform(
+                region.id,
+                selectedRegion === region.name
+              )}
             />
           ))}
         </g>
