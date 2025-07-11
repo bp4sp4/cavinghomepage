@@ -201,7 +201,6 @@ const KakaoMapSearchComponent: React.FC = () => {
         <KoreaMap
           onRegionClick={handleRegionClick}
           selectedRegion={selectedRegion}
-          places={places}
           allPlaces={allFetchedPlaces}
         />
         {selectedRegion && selectedRegion !== "서울" && position && (
