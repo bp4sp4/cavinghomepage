@@ -206,13 +206,13 @@ function getRegionTransform(regionId: string, isSelected: boolean): string {
       return "scale(1.05) translate(10, -50)"; // 제주도 선택 시: 확대 및 오른쪽 위로 이동
     } else if (regionId === "KR42") {
       // 강원도
-      return "scale(1.05) translate(-20, 0)"; // 강원도 선택 시: 확대 및 아래로 이동
+      return "scale(1.05) translate(-20, 10)"; // 강원도 선택 시: 확대 및 아래로 이동
     } else if (regionId === "KR47") {
       // 경상북도
       return "scale(1.05) translate(-30, 0)"; // 경상북도 선택 시: 확대 및 왼쪽으로 이동
     } else if (regionId === "KR44") {
       // 충청남도
-      return "scale(1.05) translate(-30, 0)"; // 충청남도 선택 시: 확대 및 오른쪽으로 이동 (값 조정 가능)
+      return "scale(1.05) translate(10, -10)"; // 충청남도 선택 시: 확대 및 오른쪽으로 이동 (값 조정 가능)
     }
   }
   // 선택되지 않은 제주도, 강원도, 경상북도, 충청남도, 그리고 다른 모든 지역에 대한 기본 transform
@@ -265,8 +265,9 @@ const KoreaMap: React.FC<KoreaMapProps> = ({
                 selectedRegion === region.name
                   ? region.id === "KR49" ||
                     region.id === "KR42" ||
-                    region.id === "KR47"
-                    ? "stroke-blue-900 stroke-[4] drop-shadow-lg" // 제주도, 강원도, 경상북도 선택 시
+                    region.id === "KR47" ||
+                    region.id === "KR44"
+                    ? "stroke-blue-900 stroke-[4] drop-shadow-lg" // 제주도, 강원도, 경상북도, 충청남도 선택 시
                     : "stroke-blue-900 stroke-[4] scale-105 drop-shadow-lg transform origin-center" // 다른 지역 선택 시
                   : selectedRegion
                   ? "opacity-30 hover:stroke-red-300 hover:stroke-[4] hover:drop-shadow-md"

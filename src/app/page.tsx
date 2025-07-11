@@ -270,7 +270,7 @@ const KakaoMapSearchComponent: React.FC = () => {
             <h1 className="text-2xl font-bold flex text-white items-center gap-2">
               한평생 돌봄지도
             </h1>
-            <p className="text-[20px] text-white">{getTitle()}</p>
+            <p className="text-[18px] text-white">{getTitle()}</p>
           </div>
           {selectedRegion && selectedRegion === "서울" ? (
             <div className="p-4">
