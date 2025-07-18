@@ -114,27 +114,6 @@ const KakaoMapSearchComponent: React.FC = () => {
     fetchPlaces(search, regionName, selectedCategory);
   };
 
-  const getTitle = () => {
-    let title = "";
-    if (selectedRegion) {
-      title = `${selectedRegion}`;
-    }
-
-    if (title) {
-      if (selectedCategory) {
-        return `${title} ${selectedCategory} 요양보호사 시설 검색`;
-      } else {
-        return `${title} 요양보호사 시설 검색`;
-      }
-    } else {
-      if (selectedCategory) {
-        return `모든 지역 ${selectedCategory} 요양보호사 시설 검색`;
-      } else {
-        return "내 주변 지역 제휴 요양원을 찾아보세요!";
-      }
-    }
-  };
-
   const regionImageOffsets: { [key: string]: { x: number; y: number } } = {
     전라북도: { x: 180, y: -40 },
     대전: { x: 95, y: -150 },
