@@ -134,65 +134,65 @@ const KakaoMapSearchComponent: React.FC = () => {
     default: { x: 0, y: 0 }, // 기본 오프셋 추가 (정의되지 않은 지역에 대비)
   };
 
-  const renderMap = () => {
-    const position = selectedRegion
-      ? regionLabelPositions[selectedRegion]
-      : null;
+  // const renderMap = () => {
+  //   const position = selectedRegion
+  //     ? regionLabelPositions[selectedRegion]
+  //     : null;
 
-    // Calculate actual rendered SVG dimensions and offsets
-    const svgAspectRatio = 800 / 800; // KoreaMap SVG viewBox is 800x800
-    let renderedSvgWidth = mapRenderedWidth;
-    let renderedSvgHeight = mapRenderedHeight;
-    let offsetX = 0;
-    let offsetY = 0;
+  //   // Calculate actual rendered SVG dimensions and offsets
+  //   const svgAspectRatio = 800 / 800; // KoreaMap SVG viewBox is 800x800
+  //   let renderedSvgWidth = mapRenderedWidth;
+  //   let renderedSvgHeight = mapRenderedHeight;
+  //   let offsetX = 0;
+  //   let offsetY = 0;
 
-    const containerAspectRatio = mapRenderedWidth / mapRenderedHeight;
+  //   const containerAspectRatio = mapRenderedWidth / mapRenderedHeight;
 
-    if (containerAspectRatio > svgAspectRatio) {
-      // Container is wider, SVG height is constrained
-      renderedSvgWidth = mapRenderedHeight * svgAspectRatio;
-      offsetX = (mapRenderedWidth - renderedSvgWidth) / 2;
-    } else {
-      // Container is taller, SVG width is constrained
-      renderedSvgHeight = mapRenderedWidth / svgAspectRatio;
-      offsetY = (mapRenderedHeight - renderedSvgHeight) / 2;
-    }
+  //   if (containerAspectRatio > svgAspectRatio) {
+  //     // Container is wider, SVG height is constrained
+  //     renderedSvgWidth = mapRenderedHeight * svgAspectRatio;
+  //     offsetX = (mapRenderedWidth - renderedSvgWidth) / 2;
+  //   } else {
+  //     // Container is taller, SVG width is constrained
+  //     renderedSvgHeight = mapRenderedWidth / svgAspectRatio;
+  //     offsetY = (mapRenderedHeight - renderedSvgHeight) / 2;
+  //   }
 
-    return (
-      <div className="relative w-full h-full">
-        <KoreaMap
-          onRegionClick={handleRegionClick}
-          selectedRegion={selectedRegion}
-          allPlaces={allFetchedPlaces}
-        />
-        {selectedRegion && position && (
-          <img
-            src={`/images/${regionNameMapping[selectedRegion]}.png`}
-            alt={selectedRegion}
-            className="absolute"
-            style={{
-              left: `${
-                offsetX +
-                (position.x +
-                  (regionImageOffsets[selectedRegion]?.x ||
-                    regionImageOffsets.default.x)) *
-                  (renderedSvgWidth / 800)
-              }px`,
-              top: `${
-                offsetY + // Offset of SVG within container
-                (position.y +
-                  (regionImageOffsets[selectedRegion]?.y ||
-                    regionImageOffsets.default.y)) *
-                  (renderedSvgHeight / 800)
-              }px`,
-              width: `${93 * (renderedSvgWidth / 800)}px`,
-              height: `${69 * (renderedSvgHeight / 800)}px`,
-            }}
-          />
-        )}
-      </div>
-    );
-  };
+  //   return (
+  //     <div className="relative w-full h-full">
+  //       <KoreaMap
+  //         onRegionClick={handleRegionClick}
+  //         selectedRegion={selectedRegion}
+  //         allPlaces={allFetchedPlaces}
+  //       />
+  //       {selectedRegion && position && (
+  //         <img
+  //           src={`/images/${regionNameMapping[selectedRegion]}.png`}
+  //           alt={selectedRegion}
+  //           className="absolute"
+  //           style={{
+  //             left: `${
+  //               offsetX +
+  //               (position.x +
+  //                 (regionImageOffsets[selectedRegion]?.x ||
+  //                   regionImageOffsets.default.x)) *
+  //                 (renderedSvgWidth / 800)
+  //             }px`,
+  //             top: `${
+  //               offsetY + // Offset of SVG within container
+  //               (position.y +
+  //                 (regionImageOffsets[selectedRegion]?.y ||
+  //                   regionImageOffsets.default.y)) *
+  //                 (renderedSvgHeight / 800)
+  //             }px`,
+  //             width: `${93 * (renderedSvgWidth / 800)}px`,
+  //             height: `${69 * (renderedSvgHeight / 800)}px`,
+  //           }}
+  //         />
+  //       )}
+  //     </div>
+  //   );
+  // };
 
   return (
     <div className="flex flex-col h-screen bg-background">
