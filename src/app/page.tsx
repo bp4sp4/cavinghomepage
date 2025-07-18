@@ -197,7 +197,7 @@ const KakaoMapSearchComponent: React.FC = () => {
   return (
     <div className="flex flex-col h-screen bg-background">
       <div className="flex w-[1280px] mx-auto flex-row-reverse flex-1 overflow-hidden">
-        <div className="w-[600px]  flex flex-col z-50">
+        <div className="w-[600px] flex flex-col z-50 border-1 border-[#e5e5e5] rounded-lg p-2 ">
           <div className="p-4 flex flex-wrap items-center gap-2">
             <Input
               placeholder="시설명 또는 지역 검색"
@@ -254,7 +254,7 @@ const KakaoMapSearchComponent: React.FC = () => {
             ) : places && places.length > 0 ? (
               <div className="p-4 space-y-3">
                 <hr />
-                <p className="text-sm text-muted-foreground  mb-4">
+                <p className="text-sm text-muted-foreground mb-4">
                   {places.length}개의 장소
                 </p>
                 {places.map((place) => (
@@ -268,12 +268,15 @@ const KakaoMapSearchComponent: React.FC = () => {
             )}
           </div>
         </div>
-        <main
+        {/* <main
           ref={mapContainerRef}
           className="flex-1 flex items-center justify-center p-4 overflow-hidden relative mr-10 bg-[#d6d6d62b] rounded-sm"
         >
           {renderMap()}
-        </main>
+        </main> */}
+        <div className="flex-1 flex justify-center items-start pt-25">
+          <main className="w-[600px] h-[650px] bg-[#e5e5e5]"></main>
+        </div>
       </div>
       <FloatingQuickMenu />
     </div>
