@@ -197,14 +197,14 @@ const KakaoMapSearchComponent: React.FC = () => {
   return (
     <div className="flex flex-col h-screen bg-background">
       <div className="flex w-[1280px] mx-auto flex-row-reverse flex-1 overflow-hidden">
-        <div className="w-[550px] border-l border-border flex flex-col z-50">
+        <div className="w-[600px]  flex flex-col z-50">
           <div className="p-4 flex flex-wrap items-center gap-2">
             <Input
               placeholder="시설명 또는 지역 검색"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="flex-1 max-w-[180px]"
+              className="flex-1 max-w-[235px]"
             />
             <select
               value={selectedRegion || ""}
@@ -213,7 +213,7 @@ const KakaoMapSearchComponent: React.FC = () => {
                 setSelectedRegion(region);
                 fetchPlaces(search, region, selectedCategory);
               }}
-              className="block w-auto min-w-[120px] px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8"
+              className="block w-auto min-w-[235px] px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8"
             >
               <option value="">모든 지역</option>
               {[
@@ -239,20 +239,7 @@ const KakaoMapSearchComponent: React.FC = () => {
                 </option>
               ))}
             </select>
-            <select
-              value={selectedCategory || ""}
-              onChange={(e) => {
-                const category = e.target.value || null;
-                setSelectedCategory(category);
-                fetchPlaces(search, selectedRegion, category);
-              }}
-              className="block w-auto min-w-[120px] px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8"
-            >
-              <option value="">모든 분류</option>
-              <option value="요양원">요양원</option>
-              <option value="주간보호센터">주간보호센터</option>
-              <option value="방문요양">방문요양</option>
-            </select>
+
             <Button onClick={handleReset} variant="outline">
               초기화
             </Button>
@@ -283,7 +270,7 @@ const KakaoMapSearchComponent: React.FC = () => {
         </div>
         <main
           ref={mapContainerRef}
-          className="flex-1 flex items-center justify-center p-4 overflow-hidden relative"
+          className="flex-1 flex items-center justify-center p-4 overflow-hidden relative mr-10 bg-[#d6d6d62b] rounded-sm"
         >
           {renderMap()}
         </main>

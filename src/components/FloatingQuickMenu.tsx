@@ -3,7 +3,7 @@ import QuickMenu from "./QuickMenu"; // Assuming QuickMenu.tsx is in the same di
 
 const FloatingQuickMenu: React.FC = () => {
   return (
-    <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50">
+    <div className="fixed right-25 top-1/2 -translate-y-1/2 z-50">
       <QuickMenu />
     </div>
   );
