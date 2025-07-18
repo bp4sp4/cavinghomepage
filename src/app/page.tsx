@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import HospitalCard from "@/components/HospitalCard";
-import KoreaMap, {
-  regionNameMapping,
-  regionLabelPositions,
-} from "@/components/KoreaMap";
+// import KoreaMap, {
+//   regionNameMapping,
+//   regionLabelPositions,
+// } from "@/components/KoreaMap";
 
 import { supabase } from "@/lib/supabaseClient";
 import FloatingQuickMenu from "@/components/FloatingQuickMenu";
@@ -27,21 +27,21 @@ export interface Place {
 
 const KakaoMapSearchComponent: React.FC = () => {
   const [places, setPlaces] = useState<Place[]>([]);
-  const [allFetchedPlaces, setAllFetchedPlaces] = useState<Place[]>([]);
+  // const [allFetchedPlaces, setAllFetchedPlaces] = useState<Place[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const [mapRenderedWidth, setMapRenderedWidth] = useState(0);
-  const [mapRenderedHeight, setMapRenderedHeight] = useState(0);
+  // const [mapRenderedWidth, setMapRenderedWidth] = useState(0);
+  // const [mapRenderedHeight, setMapRenderedHeight] = useState(0);
 
   useEffect(() => {
     const updateMapDimensions = () => {
       if (mapContainerRef.current) {
-        setMapRenderedWidth(mapContainerRef.current.clientWidth);
-        setMapRenderedHeight(mapContainerRef.current.clientHeight);
+        // setMapRenderedWidth(mapContainerRef.current.clientWidth);
+        // setMapRenderedHeight(mapContainerRef.current.clientHeight);
       }
     };
 
@@ -79,9 +79,9 @@ const KakaoMapSearchComponent: React.FC = () => {
 
       console.log("Fetched data:", data);
       setPlaces(data || []);
-      if (!region && !category) {
-        setAllFetchedPlaces(data || []);
-      }
+      // if (!region && !category) {
+      //   setAllFetchedPlaces(data || []);
+      // }
     } catch (error) {
       console.error("Error fetching places:", error);
     } finally {
@@ -109,30 +109,30 @@ const KakaoMapSearchComponent: React.FC = () => {
     console.log("선택된 장소의 지역: ", place.region);
   };
 
-  const handleRegionClick = (regionName: string) => {
-    setSelectedRegion(regionName);
-    fetchPlaces(search, regionName, selectedCategory);
-  };
+  // const handleRegionClick = (regionName: string) => {
+  //   setSelectedRegion(regionName);
+  //   fetchPlaces(search, regionName, selectedCategory);
+  // };
 
-  const regionImageOffsets: { [key: string]: { x: number; y: number } } = {
-    전라북도: { x: 180, y: -40 },
-    대전: { x: 95, y: -150 },
-    충청남도: { x: 100, y: -150 },
-    세종: { x: 100, y: -180 },
-    울산: { x: 25, y: -215 },
-    전라남도: { x: 110, y: -235 },
-    경상남도: { x: 55, y: -205 },
-    부산: { x: 40, y: -230 },
-    경기: { x: 100, y: -120 },
-    인천: { x: 190, y: -20 },
-    강원: { x: 100, y: -120 },
-    충청북도: { x: 80, y: -150 },
-    경상북도: { x: 70, y: -170 },
-    대구: { x: 47, y: -195 },
-    제주: { x: 130, y: -280 },
-    광주: { x: 100, y: -150 }, // 광주 지역 이미지 오프셋 추가
-    default: { x: 0, y: 0 }, // 기본 오프셋 추가 (정의되지 않은 지역에 대비)
-  };
+  // const regionImageOffsets: { [key: string]: { x: number; y: number } } = {
+  //   전라북도: { x: 180, y: -40 },
+  //   대전: { x: 95, y: -150 },
+  //   충청남도: { x: 100, y: -150 },
+  //   세종: { x: 100, y: -180 },
+  //   울산: { x: 25, y: -215 },
+  //   전라남도: { x: 110, y: -235 },
+  //   경상남도: { x: 55, y: -205 },
+  //   부산: { x: 40, y: -230 },
+  //   경기: { x: 100, y: -120 },
+  //   인천: { x: 190, y: -20 },
+  //   강원: { x: 100, y: -120 },
+  //   충청북도: { x: 80, y: -150 },
+  //   경상북도: { x: 70, y: -170 },
+  //   대구: { x: 47, y: -195 },
+  //   제주: { x: 130, y: -280 },
+  //   광주: { x: 100, y: -150 }, // 광주 지역 이미지 오프셋 추가
+  //   default: { x: 0, y: 0 }, // 기본 오프셋 추가 (정의되지 않은 지역에 대비)
+  // };
 
   // const renderMap = () => {
   //   const position = selectedRegion
