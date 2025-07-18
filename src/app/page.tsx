@@ -9,8 +9,9 @@ import KoreaMap, {
   regionNameMapping,
   regionLabelPositions,
 } from "@/components/KoreaMap";
-import REGION_MAP_COMPONENTS from "@/components/Region";
+
 import { supabase } from "@/lib/supabaseClient";
+import FloatingQuickMenu from "@/components/FloatingQuickMenu";
 
 export interface Place {
   id: number;
@@ -30,8 +31,7 @@ const KakaoMapSearchComponent: React.FC = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapRenderedWidth, setMapRenderedWidth] = useState(0);
@@ -53,8 +53,7 @@ const KakaoMapSearchComponent: React.FC = () => {
   const fetchPlaces = async (
     keyword = "",
     region: string | null = null,
-    city: string | null = null,
-    district: string | null = null
+    category: string | null = null
   ) => {
     setLoading(true);
     try {
@@ -63,11 +62,8 @@ const KakaoMapSearchComponent: React.FC = () => {
       if (region) {
         query = query.eq("region", region);
       }
-      if (city) {
-        query = query.eq("city", city);
-      }
-      if (district) {
-        query = query.eq("district", district);
+      if (category) {
+        query = query.eq("category", category); // Assuming 'category' is the column name
       }
 
       if (keyword) {
@@ -83,7 +79,7 @@ const KakaoMapSearchComponent: React.FC = () => {
 
       console.log("Fetched data:", data);
       setPlaces(data || []);
-      if (!region && !city && !district) {
+      if (!region && !category) {
         setAllFetchedPlaces(data || []);
       }
     } catch (error) {
@@ -94,65 +90,49 @@ const KakaoMapSearchComponent: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchPlaces();
-  }, []);
+    fetchPlaces(search, selectedRegion, selectedCategory);
+  }, [search, selectedRegion, selectedCategory]);
 
   const handleSearch = () =>
-    fetchPlaces(search, selectedRegion, selectedCity, selectedDistrict);
+    fetchPlaces(search, selectedRegion, selectedCategory);
+
   const handleReset = () => {
-    if (selectedDistrict) {
-      setSelectedDistrict(null);
-      fetchPlaces(search, selectedRegion, selectedCity, null);
-    } else if (selectedCity) {
-      setSelectedCity(null);
-      fetchPlaces(search, selectedRegion, null, null);
-    } else if (selectedRegion) {
-      setSelectedRegion(null);
-      fetchPlaces();
-    } else {
-      setSearch("");
-      fetchPlaces();
-    }
+    setSelectedRegion(null);
+    setSelectedCategory(null);
+    setSearch("");
+    fetchPlaces("", null, null);
   };
 
   const handleSelect = (place: Place) => {
     setSelectedRegion(place.region);
-    setSelectedCity(place.city ?? null);
-    setSelectedDistrict(place.district ?? null);
-    fetchPlaces(
-      search,
-      place.region,
-      place.city ?? null,
-      place.district ?? null
-    );
-    console.log(
-      "선택된 장소의 지역: ",
-      place.region,
-      place.city,
-      place.district
-    );
+    fetchPlaces(search, place.region, selectedCategory);
+    console.log("선택된 장소의 지역: ", place.region);
   };
 
   const handleRegionClick = (regionName: string) => {
     setSelectedRegion(regionName);
-    setSelectedCity(null);
-    setSelectedDistrict(null);
-    fetchPlaces(search, regionName, null, null);
+    fetchPlaces(search, regionName, selectedCategory);
   };
 
   const getTitle = () => {
-    if (selectedDistrict) {
-      return `${selectedRegion} ${
-        selectedCity ? selectedCity + " " : ""
-      }${selectedDistrict} 요양보호사 시설 검색`;
-    }
-    if (selectedCity) {
-      return `${selectedRegion} ${selectedCity} 요양보호사 시설 검색`;
-    }
+    let title = "";
     if (selectedRegion) {
-      return `${selectedRegion} 요양보호사 시설 검색`;
+      title = `${selectedRegion}`;
     }
-    return "내 주변 지역 제휴 요양원을 찾아보세요!";
+
+    if (title) {
+      if (selectedCategory) {
+        return `${title} ${selectedCategory} 요양보호사 시설 검색`;
+      } else {
+        return `${title} 요양보호사 시설 검색`;
+      }
+    } else {
+      if (selectedCategory) {
+        return `모든 지역 ${selectedCategory} 요양보호사 시설 검색`;
+      } else {
+        return "내 주변 지역 제휴 요양원을 찾아보세요!";
+      }
+    }
   };
 
   const regionImageOffsets: { [key: string]: { x: number; y: number } } = {
@@ -176,18 +156,6 @@ const KakaoMapSearchComponent: React.FC = () => {
   };
 
   const renderMap = () => {
-    if (selectedRegion && selectedRegion === "서울") {
-      const RegionMapComponent = REGION_MAP_COMPONENTS[selectedRegion];
-      return (
-        <RegionMapComponent
-          selectedDistrict={selectedDistrict ?? undefined}
-          places={places}
-          allPlaces={places}
-          onDistrictClick={() => {}}
-        />
-      );
-    }
-
     const position = selectedRegion
       ? regionLabelPositions[selectedRegion]
       : null;
@@ -218,7 +186,7 @@ const KakaoMapSearchComponent: React.FC = () => {
           selectedRegion={selectedRegion}
           allPlaces={allFetchedPlaces}
         />
-        {selectedRegion && selectedRegion !== "서울" && position && (
+        {selectedRegion && position && (
           <img
             src={`/images/${regionNameMapping[selectedRegion]}.png`}
             alt={selectedRegion}
@@ -249,53 +217,67 @@ const KakaoMapSearchComponent: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <header className="w-full P-4 flex justify-center items-center">
-        <img
-          src="/images/mainBanner.png"
-          alt="Banner"
-          className="h-16 object-cover w-full"
-        />
-      </header>
-      <div className="flex flex-row-reverse flex-1 overflow-hidden">
-        <div className="w-[543px] border-l border-border flex flex-col z-50">
-          <div
-            className="p-4 border-b flex items-left gap-2 flex-col"
-            style={{
-              backgroundImage: "url('/images/main__banner.png')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-            }}
-          >
-            <h1 className="text-2xl font-bold flex text-white items-center gap-2">
-              한평생 돌봄지도
-            </h1>
-            <p className="text-[18px] text-white">{getTitle()}</p>
+      <div className="flex w-[1280px] mx-auto flex-row-reverse flex-1 overflow-hidden">
+        <div className="w-[550px] border-l border-border flex flex-col z-50">
+          <div className="p-4 flex flex-wrap items-center gap-2">
+            <Input
+              placeholder="시설명 또는 지역 검색"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              className="flex-1 max-w-[180px]"
+            />
+            <select
+              value={selectedRegion || ""}
+              onChange={(e) => {
+                const region = e.target.value || null;
+                setSelectedRegion(region);
+                fetchPlaces(search, region, selectedCategory);
+              }}
+              className="block w-auto min-w-[120px] px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8"
+            >
+              <option value="">모든 지역</option>
+              {[
+                "서울",
+                "경기",
+                "인천",
+                "강원",
+                "충청북도",
+                "충청남도",
+                "대전",
+                "세종",
+                "전라북도",
+                "전라남도",
+                "광주",
+                "경상북도",
+                "경상남도",
+                "부산",
+                "울산",
+                "제주",
+              ].map((region) => (
+                <option key={region} value={region}>
+                  {region}
+                </option>
+              ))}
+            </select>
+            <select
+              value={selectedCategory || ""}
+              onChange={(e) => {
+                const category = e.target.value || null;
+                setSelectedCategory(category);
+                fetchPlaces(search, selectedRegion, category);
+              }}
+              className="block w-auto min-w-[120px] px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8"
+            >
+              <option value="">모든 분류</option>
+              <option value="요양원">요양원</option>
+              <option value="주간보호센터">주간보호센터</option>
+              <option value="방문요양">방문요양</option>
+            </select>
+            <Button onClick={handleReset} variant="outline">
+              초기화
+            </Button>
           </div>
-          {selectedRegion && selectedRegion === "서울" ? (
-            <div className="p-4">
-              <Button onClick={handleReset} className="w-full">
-                {selectedCity
-                  ? `${selectedRegion} 전체 맵으로`
-                  : "전체 맵으로 돌아가기"}
-              </Button>
-            </div>
-          ) : (
-            <div className="p-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="시설명 또는 지역 검색..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                />
-                <Button onClick={handleSearch}>검색</Button>
-                <Button onClick={handleReset} variant="outline">
-                  리셋
-                </Button>
-              </div>
-            </div>
-          )}
           <div className="flex-1 overflow-y-auto">
             {loading ? (
               <div className="p-4 space-y-3">
@@ -327,6 +309,7 @@ const KakaoMapSearchComponent: React.FC = () => {
           {renderMap()}
         </main>
       </div>
+      <FloatingQuickMenu />
     </div>
   );
 };
