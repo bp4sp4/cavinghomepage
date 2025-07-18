@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Header = () => {
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-white border-b-1 border-[#e5e5e5] mb-3">
       <div className="w-full">
         <img
           src="/images/mainBanner.png"
