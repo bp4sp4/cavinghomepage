@@ -3,13 +3,7 @@ import Link from "next/link";
 const Header = () => {
   return (
     <header className="bg-white border-b-1 border-[#e5e5e5] mb-3">
-      <div className="w-full">
-        <img
-          src="/images/mainBanner.png"
-          alt="Banner"
-          className="h-[64px] w-full object-cover"
-        />
-      </div>
+
       <div className="container max-w-[1280px] mx-auto px-4 py-2 flex justify-between items-center">
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
